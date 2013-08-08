@@ -1,0 +1,24 @@
+# ansible playbook for installing jenkins
+- name: install jdk 1.7
+  action: yum pkg=java-1.7.0-openjdk state=installed
+- name: download jenkins.repo
+  action: get_url url=http://pkg.jenkins-ci.org/redhat/jenkins.repo dest=/etc/yum.repos.d/jenkins.repo
+#- name: import jenkins repo key
+#  action: rpm_key state=present key=http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key # needs ansible >= 1.3
+- name: check jenkins repo key is imported
+  shell: |
+    rpm -qi gpg-pubkey-* | grep -q '^Summary     : gpg(Kohsuke Kawaguchi <kohsuke.kawaguchi@sun.com>)$'
+  register: result
+  ignore_errors: True
+- name: import jenkins repo key
+  command: rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
+  when: result|failed
+#- name: import jenkins repo key
+#  shell: |
+#    if ! rpm -qi gpg-pubkey* | grep -q '^Summary     : gpg(Kohsuke Kawaguchi <kohsuke.kawaguchi@sun.com>)$'; then
+#      rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
+#    fi
+- name: install jenkins
+  action: yum pkg=jenkins state=installed
+- name: start jenkins service
+  service: name=jenkins state=started enabled=yes
