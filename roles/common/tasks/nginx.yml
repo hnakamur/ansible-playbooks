@@ -16,6 +16,10 @@
   when: result|failed
 - name: install nginx
   yum: pkg=nginx state=installed
+- name: nginx main config file
+  template: src=roles/common/templates/nginx.conf.j2 dest=/etc/nginx/nginx.conf owner=root group=root mode=0644
+  notify:
+    - reload nginx
 - name: nginx http config file
   template: src=roles/common/templates/nginx.default.conf.j2 dest=/etc/nginx/conf.d/default.conf owner=root group=root mode=0644
   notify:
