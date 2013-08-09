@@ -1,0 +1,14 @@
+# /etc/nginx/conf.d/ssl.location.d/ganglia.conf
+# {{ ansible_managed }}
+
+location /ganglia/ {
+    alias /usr/share/ganglia/;
+    index index.php;
+}
+
+location ~ ^/ganglia/.*\.php$ {
+    fastcgi_pass   unix:{{ php_fpm_listen_address }};
+    fastcgi_index  index.php;
+    fastcgi_param  SCRIPT_FILENAME /usr/share/$fastcgi_script_name;
+    include        fastcgi_params;
+}

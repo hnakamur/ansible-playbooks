@@ -1,0 +1,23 @@
+- name: install ganglia
+  yum: pkg={{ item }}
+  with_items:
+    - ganglia
+    - ganglia-gmetad
+    - ganglia-gmond
+    - ganglia-web
+- name: start gmetad service
+  service: name=gmetad state=started enabled=yes
+- name: start gmond service
+  service: name=gmond state=started enabled=yes
+- name: ganglia config file for nginx
+  template: src=roles/common/templates/ganglia.nginx.ssl.conf.j2 dest=/etc/nginx/conf.d/ssl.location.d/ganglia.conf owner=root group=root mode=0644
+  notify:
+    - reload nginx
+- name: ganglia gmetad config file
+  template: src=roles/common/templates/ganglia.gmetad.conf.j2 dest=/etc/ganglia/gmetad.conf owner=root group=root mode=0644
+  notify:
+    - restart gmetad
+- name: ganglia gmond config file
+  template: src=roles/common/templates/ganglia.gmond.conf.j2 dest=/etc/ganglia/gmond.conf owner=root group=root mode=0644
+  notify:
+    - restart gmond

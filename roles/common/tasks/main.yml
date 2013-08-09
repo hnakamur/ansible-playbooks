@@ -6,4 +6,5 @@
 - include: php.yml
 - include: php-fpm.yml
 - include: jenkins.yml
+- include: ganglia.yml
 - include: iptables.yml
