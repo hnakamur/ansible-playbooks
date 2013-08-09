@@ -4,5 +4,6 @@
 - include: nginx.yml
 - include: remi.yml
 - include: php.yml
+- include: php-fpm.yml
 - include: jenkins.yml
 - include: iptables.yml

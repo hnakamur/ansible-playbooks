@@ -2,6 +2,8 @@
   service: name=iptables state=restarted
 - name: reload nginx
   service: name=nginx state=reloaded
+- name: reload php-fpm
+  service: name=php-fpm state=reloaded
 - name: restart ntpd
   service: name=ntpd state=restarted
 - name: restart jenkins

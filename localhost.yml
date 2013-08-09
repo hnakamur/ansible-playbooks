@@ -4,3 +4,5 @@
   sudo: yes
   roles:
     - common
+  vars_files:
+    - roles/common/vars/php_fpm.yml
