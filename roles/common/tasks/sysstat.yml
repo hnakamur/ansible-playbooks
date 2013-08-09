@@ -1,0 +1,4 @@
+- name: install sysstat
+  yum: pkg=sysstat state=installed
+- name: sysstat cron file
+  template: src=roles/common/templates/sysstat.cron.j2 dest=/etc/cron.d/sysstat owner=root group=root mode=0644
