@@ -1,10 +1,8 @@
 # ansible playbook for installing jenkins
 - name: install jdk 1.7
-  action: yum pkg=java-1.7.0-openjdk state=installed
+  yum: pkg=java-1.7.0-openjdk state=installed
 - name: download jenkins.repo
-  action: get_url url=http://pkg.jenkins-ci.org/redhat/jenkins.repo dest=/etc/yum.repos.d/jenkins.repo
-#- name: import jenkins repo key
-#  action: rpm_key state=present key=http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key # needs ansible >= 1.3
+  get_url : url=http://pkg.jenkins-ci.org/redhat/jenkins.repo dest=/etc/yum.repos.d/jenkins.repo
 - name: check jenkins repo key is imported
   shell: |
     rpm -qi gpg-pubkey-* | grep -q '^Summary     : gpg(Kohsuke Kawaguchi <kohsuke.kawaguchi@sun.com>)$'
@@ -13,12 +11,17 @@
 - name: import jenkins repo key
   command: rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
   when: result|failed
-#- name: import jenkins repo key
-#  shell: |
-#    if ! rpm -qi gpg-pubkey* | grep -q '^Summary     : gpg(Kohsuke Kawaguchi <kohsuke.kawaguchi@sun.com>)$'; then
-#      rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
-#    fi
 - name: install jenkins
-  action: yum pkg=jenkins state=installed
+  yum: pkg=jenkins state=installed
+- name: nginx https location config file directory
+  file: path=/etc/nginx/conf.d/ssl.location.d state=directory owner=root group=root mode=0755
+- name: jenkins sysconfig file
+  template: src=roles/common/templates/jenkins.sysconfig.j2 dest=/etc/sysconfig/jenkins owner=root group=root mode=0600
+  notify:
+    - restart jenkins
 - name: start jenkins service
   service: name=jenkins state=started enabled=yes
+- name: jenkins config file for nginx
+  template: src=roles/common/templates/jenkins.nginx.ssl.conf.j2 dest=/etc/nginx/conf.d/ssl.location.d/jenkins.conf owner=root group=root mode=0644
+  notify:
+    - reload nginx
