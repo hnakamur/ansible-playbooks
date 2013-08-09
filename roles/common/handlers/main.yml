@@ -1,6 +1,8 @@
-- name: reload nginx
-  service: name=nginx state=reloaded
 - name: restart iptables
   service: name=iptables state=restarted
+- name: reload nginx
+  service: name=nginx state=reloaded
+- name: restart ntpd
+  service: name=ntpd state=restarted
 - name: restart jenkins
   service: name=jenkins state=restarted

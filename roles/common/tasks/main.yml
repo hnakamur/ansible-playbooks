@@ -1,3 +1,4 @@
+- include: ntp.yml
 - include: self_signed_certificate.yml
 - include: nginx.yml
 - include: jenkins.yml
