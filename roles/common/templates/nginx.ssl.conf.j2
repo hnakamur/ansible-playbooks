@@ -1,0 +1,23 @@
+# /etc/nginx/conf.d/ssl.conf
+# {{ ansible_managed }}
+server {
+    listen       443;
+    server_name  {{ inventory_hostname }};
+
+    ssl                  on;
+    ssl_certificate      /etc/pki/tls/certs/{{ inventory_hostname }}.crt;
+    ssl_certificate_key  /etc/pki/tls/private/{{ inventory_hostname }}.key;
+
+    ssl_session_timeout  5m;
+
+    ssl_protocols  SSLv2 SSLv3 TLSv1;
+    ssl_ciphers  HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers   on;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+
+    include ssl.location.d/*.conf;
+}
