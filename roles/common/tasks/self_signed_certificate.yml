@@ -1,0 +1,15 @@
+- name: self signed certificate
+  shell: |
+    crt_file="/etc/pki/tls/certs/{{ inventory_hostname }}.crt" &&
+    key_file="/etc/pki/tls/private/{{ inventory_hostname }}.key" &&
+    crt_and_key_file="/etc/pki/tls/private/{{ inventory_hostname }}.crt_and_key" &&
+    subject="/C=JP/ST=Osaka/L=Osaka City/CN={{ inventory_hostname }}" &&
+    openssl req -new -newkey rsa:2048 -sha1 -x509 -nodes \
+      -set_serial 1 \
+      -days 365 \
+      -subj "$subject" \
+      -out "$crt_file" \
+      -keyout "$key_file" &&
+    cat "$crt_file" "$key_file" >> "$crt_and_key_file" &&
+    chmod 400 "$key_file" "$crt_and_key_file"
+    creates="/etc/pki/tls/certs/{{ inventory_hostname }}.crt"
