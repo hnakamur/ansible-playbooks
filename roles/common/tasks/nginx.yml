@@ -1,12 +1,11 @@
 # ansible playbook for installing nginx
 - name: check nginx repo key is imported
   shell: |
-    rpm -qi gpg-pubkey-* | grep -q '^Summary     : gpg(nginx signing key <signing-key@nginx.com>)$'
+    rpm -qi gpg-pubkey-* | grep -q '^Summary     : gpg(nginx signing key <signing-key@nginx.com>)$'; echo $?
   register: result
-  ignore_errors: True
 - name: import nginx repo key
   command: rpm --import http://nginx.org/keys/nginx_signing.key
-  when: result|failed
+  when: result.stdout != '0'
 - name: check nginx repo is installed
   shell: rpm -q nginx-release-centos > /dev/null
   register: result
