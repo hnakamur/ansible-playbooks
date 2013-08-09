@@ -5,12 +5,11 @@
   get_url : url=http://pkg.jenkins-ci.org/redhat/jenkins.repo dest=/etc/yum.repos.d/jenkins.repo
 - name: check jenkins repo key is imported
   shell: |
-    rpm -qi gpg-pubkey-* | grep -q '^Summary     : gpg(Kohsuke Kawaguchi <kohsuke.kawaguchi@sun.com>)$'
+    rpm -qi gpg-pubkey-* | grep -q '^Summary     : gpg(Kohsuke Kawaguchi <kohsuke.kawaguchi@sun.com>)$'; echo $?
   register: result
-  ignore_errors: True
 - name: import jenkins repo key
   command: rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
-  when: result|failed
+  when: result.stdout != "0"
 - name: install jenkins
   yum: pkg=jenkins state=installed
 - name: nginx https location config file directory

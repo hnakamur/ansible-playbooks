@@ -7,12 +7,11 @@
   command: rpm --import http://nginx.org/keys/nginx_signing.key
   when: result.stdout != '0'
 - name: check nginx repo is installed
-  shell: rpm -q nginx-release-centos > /dev/null
+  shell: rpm -q nginx-release-centos > /dev/null; echo $?
   register: result
-  ignore_errors: True
 - name: install nginx repo
   command: rpm -i http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
-  when: result|failed
+  when: result.stdout != '0'
 - name: install nginx
   yum: pkg=nginx state=installed
 - name: nginx main config file
