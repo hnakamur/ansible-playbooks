@@ -8,4 +8,5 @@
 - include: jenkins.yml
 - include: ganglia.yml
 - include: fcgiwrap.yml
+- include: nagios.yml
 - include: iptables.yml

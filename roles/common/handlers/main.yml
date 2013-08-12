@@ -1,9 +1,13 @@
 - name: restart iptables
   service: name=iptables state=restarted
+- name: reload nagios
+  service: name=nagios state=reloaded
 - name: reload nginx
   service: name=nginx state=reloaded
 - name: reload php-fpm
   service: name=php-fpm state=reloaded
+- name: reload spawn-fcgi
+  service: name=spawn-fcgi state=reloaded
 - name: restart gmetad
   service: name=gmetad state=restarted
 - name: restart gmond
