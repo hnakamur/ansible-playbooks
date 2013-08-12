@@ -5,6 +5,8 @@
     - ganglia-gmetad
     - ganglia-gmond
     - ganglia-web
+- name: ganglia chgrp ganglia-web config file
+  file: path=/etc/ganglia/private_clusters group=nginx
 - name: start gmetad service
   service: name=gmetad state=started enabled=yes
 - name: start gmond service
