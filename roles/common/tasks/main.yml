@@ -7,4 +7,5 @@
 - include: php-fpm.yml
 - include: jenkins.yml
 - include: ganglia.yml
+- include: fcgiwrap.yml
 - include: iptables.yml
