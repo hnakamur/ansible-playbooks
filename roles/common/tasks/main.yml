@@ -2,6 +2,7 @@
 - include: ntp.yml
 - include: sysstat.yml
 - include: self_signed_certificate.yml
+- include: git.yml
 - include: nginx.yml
 - include: ganglia.yml
 - include: remi.yml
