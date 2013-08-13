@@ -1,3 +1,4 @@
+- include: epel.yml
 - include: ntp.yml
 - include: sysstat.yml
 - include: self_signed_certificate.yml
