@@ -4,7 +4,6 @@
 - include: self_signed_certificate.yml
 - include: git.yml
 - include: nginx.yml
-- include: ganglia.yml
 - include: remi.yml
 - include: php.yml
 - include: php-fpm.yml
@@ -12,3 +11,4 @@
 - include: fcgiwrap.yml
 - include: nagios.yml
 - include: iptables.yml
+- include: ganglia.yml
