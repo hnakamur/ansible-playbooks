@@ -5,5 +5,6 @@
   roles:
     - common
   vars_files:
+    - roles/common/vars/timezone.yml
     - roles/common/vars/php_fpm.yml
     - roles/common/vars/ganglia.yml

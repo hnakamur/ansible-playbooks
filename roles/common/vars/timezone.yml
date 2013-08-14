@@ -1,0 +1,2 @@
+# set relative path to /usr/share/zoneinfo/
+timezone_filename: Asia/Tokyo

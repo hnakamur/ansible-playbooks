@@ -1,0 +1,7 @@
+- name: set timezone
+  #file: src=/usr/share/zoneinfo/{{ timezone_filename }} dest=/etc/localtime path=/etc/localtime owner=root group=root state=link force=yes
+  #failed: [centos] => {"failed": true, "gid": 0, "group": "root", "item": "", "mode": "0644", "owner": "root", "path": "/etc/localtime", "size": 118, "state": "file", "uid": 0}
+  #msg: refusing to convert between file and link for /usr/share/zoneinfo/Asia/Tokyo
+  #
+  #FATAL: all hosts have already failed -- aborting
+  copy: src=/usr/share/zoneinfo/{{ timezone_filename }} dest=/etc/localtime owner=root group=root mode=0644
