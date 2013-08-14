@@ -19,5 +19,6 @@
     - php-fpm
     - gmond
     - gmetad
+    - jenkins
 - name: start monit service
   service: name=monit state=started enabled=yes
