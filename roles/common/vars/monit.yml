@@ -1,0 +1,4 @@
+monit_poll_interval_in_seconds: 60
+monit_mail_server: smtp.gmail.com port 587 username _YOUR_MAIL_ADDRESS_HERE password '_YOUR_PASSWORD_HERE_' using tlsv1 with timeout 15 seconds
+monit_sender_address: monit@example.com
+monit_alert_recipient_addresses: ops@example.com

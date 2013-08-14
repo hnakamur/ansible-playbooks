@@ -1,5 +1,7 @@
 - name: restart iptables
   service: name=iptables state=restarted
+- name: reload monit
+  service: name=monit state=reloaded
 - name: reload nagios
   service: name=nagios state=reloaded
 - name: reload nginx

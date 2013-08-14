@@ -8,3 +8,4 @@
     - roles/common/vars/timezone.yml
     - roles/common/vars/php_fpm.yml
     - roles/common/vars/ganglia.yml
+    - roles/common/vars/monit.yml

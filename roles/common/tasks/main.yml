@@ -9,8 +9,9 @@
 - include: remi.yml
 - include: php.yml
 - include: php-fpm.yml
-- include: jenkins.yml
+- include: monit.yml
+#- include: jenkins.yml
 - include: fcgiwrap.yml
-- include: nagios.yml
+#- include: nagios.yml
 - include: iptables.yml
 - include: ganglia.yml

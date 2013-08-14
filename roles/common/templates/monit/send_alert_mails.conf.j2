@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+
+set mailserver {{ monit_mail_server }}
+
+set mail-format {
+from: {{ monit_sender_address }}
+subject: $HOST : $SERVICE - $EVENT
+message: Monit
+ACTION  : $ACTION
+SERVICE : $SERVICE
+at $DATE on $HOST.
+DESCRIPTION : $DESCRIPTION
+}
+set alert {{ monit_alert_recipient_addresses }}

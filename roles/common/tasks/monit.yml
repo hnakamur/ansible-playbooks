@@ -1,0 +1,16 @@
+- name: install monit
+  yum: name=monit
+- name: monit main config
+  template: src=roles/common/templates/monit/monit.conf.j2 dest=/etc/monit.conf owner=root group=root mode=0600
+  notify:
+    - reload monit
+- name: monit additional config files
+  template: src=roles/common/templates/monit/{{ item }}.conf.j2 dest=/etc/monit.d/{{ item }}.conf owner=root group=root mode=0600
+  notify:
+    - reload monit
+  with_items:
+    - monit_http
+    - send_alert_mails
+    - sshd
+- name: start monit service
+  service: name=monit state=started enabled=yes
