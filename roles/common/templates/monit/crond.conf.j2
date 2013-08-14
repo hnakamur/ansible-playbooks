@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+
+check process crond with pidfile /var/run/crond.pid
+  start "/sbin/service crond start"
+  stop "/sbin/service crond stop"

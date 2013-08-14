@@ -12,5 +12,12 @@
     - monit_http
     - send_alert_mails
     - sshd
+    - ntpd
+    - crond
+    - nginx
+    - spawn-fcgi
+    - php-fpm
+    - gmond
+    - gmetad
 - name: start monit service
   service: name=monit state=started enabled=yes

@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+
+check process gmetad with pidfile /var/run/gmetad.pid
+  start "/sbin/service gmetad start"
+  stop "/sbin/service gmetad stop"

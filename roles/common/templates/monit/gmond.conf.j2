@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+
+check process gmond with pidfile /var/run/gmond.pid
+  start "/sbin/service gmond start"
+  stop "/sbin/service gmond stop"

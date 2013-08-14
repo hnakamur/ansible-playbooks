@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+
+check process php-fpm with pidfile /var/run/php-fpm/php-fpm.pid
+  start "/sbin/service php-fpm start"
+  stop "/sbin/service php-fpm stop"

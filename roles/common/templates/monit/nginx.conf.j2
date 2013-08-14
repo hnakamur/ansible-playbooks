@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+
+check process nginx with pidfile /var/run/nginx.pid
+  start "/sbin/service nginx start"
+  stop "/sbin/service nginx stop"

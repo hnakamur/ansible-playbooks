@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+
+check process spawn-fcgi with pidfile /var/run/spawn-fcgi.pid
+  start "/sbin/service spawn-fcgi start"
+  stop "/sbin/service spawn-fcgi stop"

@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+
+check process ntpd with pidfile /var/run/ntpd.pid
+  start "/sbin/service ntpd start"
+  stop "/sbin/service ntpd stop"
