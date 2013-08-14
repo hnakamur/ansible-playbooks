@@ -13,6 +13,8 @@
     - nagios-plugins-swap
     - nagios-plugins-load
     - spawn-fcgi
+- name: put nginx user to nagios group.
+  user: name=nginx groups=nagios append=yes
 - name: change group of nagios passwd file for nginx
   file: path=/etc/nagios/passwd group=nginx
 #- name: add a htpasswd user for nagios
