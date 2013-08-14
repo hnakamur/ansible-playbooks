@@ -1,0 +1,52 @@
+#!/bin/sh
+#
+# chkconfig: 2345 20 80
+# description: gmetad startup script
+#
+# {{ ansible_managed }}
+#
+GMETAD=/usr/sbin/gmetad
+PIDFILE=/var/run/gmetad.pid
+
+. /etc/rc.d/init.d/functions
+
+test -f /etc/sysconfig/gmetad && . /etc/sysconfig/gmetad
+
+export RRDCACHED_ADDRESS
+
+RETVAL=0
+
+case "$1" in
+   start)
+      echo -n "Starting GANGLIA gmetad: "
+      [ -f $GMETAD ] || exit 1
+
+      daemon $GMETAD -p $PIDFILE
+      RETVAL=$?
+      echo
+      [ $RETVAL -eq 0 ] && touch /var/lock/subsys/gmetad
+      ;;
+
+  stop)
+      echo -n "Shutting down GANGLIA gmetad: "
+      killproc -p $PIDFILE $GMETAD
+      RETVAL=$?
+      echo
+      [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/gmetad $PIDFILE
+      ;;
+
+  restart|reload)
+      $0 stop
+      $0 start
+      RETVAL=$?
+      ;;
+  status)
+      status $GMETAD
+      RETVAL=$?
+      ;;
+  *)
+      echo "Usage: $0 {start|stop|restart|status}"
+      exit 1
+esac
+
+exit $RETVAL

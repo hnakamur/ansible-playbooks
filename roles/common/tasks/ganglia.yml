@@ -46,6 +46,14 @@
   template: src=roles/common/templates/ganglia.gmetad.conf.j2 dest=/etc/ganglia/gmetad.conf owner=root group=root mode=0644
   notify:
     - restart gmetad
+- name: gmond init script
+  template: src=roles/common/templates/ganglia.gmond.init.j2 dest=/etc/init.d/gmond owner=root group=root mode=0755
+  notify:
+    - restart gmond
+- name: gmetad init script
+  template: src=roles/common/templates/ganglia.gmetad.init.j2 dest=/etc/init.d/gmetad owner=root group=root mode=0755
+  notify:
+    - restart gmetad
 - name: start gmond service
   service: name=gmond state=started enabled=yes
 - name: start gmetad service
