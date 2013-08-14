@@ -1,0 +1,7 @@
+<?php
+# /etc/ganglia/conf.php
+# {{ ansible_managed }}
+
+$conf['nagios_cache_enabled'] = 1;
+$conf['nagios_cache_file'] = $conf['conf_dir'] . "/nagios_ganglia.cache";
+$conf['nagios_cache_time'] = 45;

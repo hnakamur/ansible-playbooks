@@ -1,2 +1,4 @@
 ganglia_cluster_name: my_cluster_1
 ganglia_send_metadata_interval: 5
+ganglia_url_for_nagios: http://localhost/ganglia
+ganglia_webserver_user: nginx

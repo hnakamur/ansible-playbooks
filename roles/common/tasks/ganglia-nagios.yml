@@ -1,0 +1,41 @@
+- name: nagios plugins for ganglia
+  template: src=roles/common/templates/ganglia-nagios/{{ item }}.j2 dest=/usr/share/ganglia/nagios/{{ item }} owner=root group=root mode=0755
+  with_items:
+    - check_for_stuck_gmonds.sh
+    - check_ganglia_metric.sh
+    - check_heartbeat.sh
+    - check_host_regex.sh
+    - check_metric_regex.sh
+    - check_multiple_metrics.sh
+    - check_multiple_metrics_warn.sh
+    - check_value_same_everywhere.sh
+    - warmup_metric_cache.sh
+- name: symlinks to nagios plugins for ganglia
+  file: src=/usr/share/ganglia/nagios/{{ item }} dest=/usr/lib64/nagios/plugins/{{ item }} state=link owner=root group=root
+  with_items:
+    - check_for_stuck_gmonds.sh
+    - check_ganglia_metric.sh
+    - check_heartbeat.sh
+    - check_host_regex.sh
+    - check_metric_regex.sh
+    - check_multiple_metrics.sh
+    - check_multiple_metrics_warn.sh
+    - check_value_same_everywhere.sh
+    - warmup_metric_cache.sh
+- name: ganglia conf.php
+  template: src=roles/common/templates/ganglia-nagios/conf.php.j2 dest=/etc/ganglia/conf.php owner=root group=root mode=0644
+- name: ganglia conf.php symlink
+#  file: src=../../../etc/ganglia/conf.php dest=/usr/share/ganglia/conf.php state=link owner=root group=root # ansbile returned msg: absolute paths are required
+  command: ln -s ../../../etc/ganglia/conf.php /usr/share/ganglia/conf.php creates=/usr/share/ganglia/conf.php
+- name: ganglia nagios check_heartbeat
+  template: src=roles/common/templates/ganglia-nagios/ganglia.check_heartbeat.cfg.j2 dest=/etc/nagios/conf.d/ganglia.check_heartbeat.cfg owner=root group=root mode=0644
+  notify:
+    - reload nagios
+- name: ganglia nagios check_metrics
+  template: src=roles/common/templates/ganglia-nagios/ganglia.check_metrics.cfg.j2 dest=/etc/nagios/conf.d/ganglia.check_metrics.cfg owner=root group=root mode=0644
+  notify:
+    - reload nagios
+- name: ganglia config file for nginx
+  template: src=roles/common/templates/ganglia-nagios/ganglia.nginx.conf.j2 dest=/etc/nginx/conf.d/location.d/ganglia.conf owner=root group=root mode=0644
+  notify:
+    - reload nginx

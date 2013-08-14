@@ -1,0 +1,14 @@
+# /etc/nginx/conf.d/location.d/ganglia.conf
+# {{ ansible_managed }}
+
+# url for access from localhost nagios
+location ~ ^/ganglia/.*\.php$ {
+    allow 127.0.0.1;
+    deny all;
+
+    fastcgi_pass   unix:{{ php_fpm_listen_address }};
+    fastcgi_index  index.php;
+    fastcgi_param  SCRIPT_FILENAME /usr/share/$fastcgi_script_name;
+    include        fastcgi_params;
+}
+

@@ -1,0 +1,14 @@
+# {{ ansbile_managed }}
+
+define command{
+        command_name    check_ganglia_heartbeat
+        command_line    $USER1$/check_heartbeat.sh host=$HOSTADDRESS$ threshold=$ARG1$
+        }
+
+define service{
+        use                             local-service         ; Name of service template to use
+        host_name                       localhost
+        service_description             GANGLIA_HEARTBEAT
+        check_command                   check_ganglia_heartbeat!50
+        notifications_enabled           0
+        }

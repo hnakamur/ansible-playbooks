@@ -1,0 +1,22 @@
+# {{ ansbile_managed }}
+
+define command{
+        command_name    check_ganglia_metric
+        command_line    $USER1$/check_ganglia_metric.sh host=$HOSTADDRESS$ metric_name=$ARG1$ operator=$ARG2$ critical_value=$ARG3$
+        }
+
+define service{
+        use                             local-service         ; Name of service template to use
+        host_name                       localhost
+        service_description             GANGLIA_LOAD_ONE
+        check_command                   check_ganglia_metric!load_one!more!5
+        notifications_enabled           0
+        }
+
+define service{
+        use                             local-service         ; Name of service template to use
+        host_name                       localhost
+        service_description             GANGLIA_DISK_FREE
+        check_command                   check_ganglia_metric!disk_free!less!10 ;alert when free disk space falls below 10GB.
+        notifications_enabled           0
+        }
