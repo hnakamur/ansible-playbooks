@@ -11,6 +11,8 @@
   with_items:
     - monit_http
     - send_alert_mails
+    - system
+    - root_filesystem
     - sshd
     - ntpd
     - crond

@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+
+check system centos
+  if loadavg(1min) > 5 then alert
+  if memory usage > 75% then alert

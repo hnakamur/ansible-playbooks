@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+
+check filesystem root path /
+  if space usage > 80% then alert
+  if inode usage > 80% then alert
