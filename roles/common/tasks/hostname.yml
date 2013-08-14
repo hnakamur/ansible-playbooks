@@ -1,0 +1,14 @@
+- name: check hostname config
+  command: |
+    awk -F = -v host={{ inventory_hostname }} '$1=="HOSTNAME"{current_host=$2} END{print current_host == host ? "0" : "1"}' /etc/sysconfig/network
+  register: result
+- name: edit hostname config
+  command: sed -i 's/^HOSTNAME=.*/HOSTNAME={{ inventory_hostname }}/' /etc/sysconfig/network
+  when: result.stdout != "0"
+- name: check hostname
+  shell: |
+    test `hostname` = {{ inventory_hostname }}; echo $?
+  register: result
+- name: set hostname
+  command: hostname {{ inventory_hostname }}
+  when: result.stdout != "0"
