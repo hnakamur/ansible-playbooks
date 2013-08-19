@@ -17,6 +17,7 @@
 - include: xbuild.yml
 - include: xbuild-ruby.yml
 - include: xbuild-python.yml
+- include: xbuild-php.yml
 - include: ulimit-num-open-fd.yml
 - include: td-agent.yml
 - include: erlang.yml
