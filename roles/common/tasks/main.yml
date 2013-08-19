@@ -14,3 +14,5 @@
 - include: iptables.yml
 - include: ganglia.yml
 - include: monit.yml
+- include: xbuild.yml
+- include: xbuild-ruby.yml
