@@ -1,3 +1,4 @@
+xbuild_update: no
 xbuild_install_dir_prefix: /usr/local
 xbuild_ruby_version: 2.0.0-p247
 xbuild_php_version: 5.5.2

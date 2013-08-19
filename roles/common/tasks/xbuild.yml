@@ -1,4 +1,6 @@
 - name: install git
   yum: name=git state=present
 - name: install xbuild
-  git: repo=git://github.com/tagomoris/xbuild.git dest=/usr/local/src/xbuild
+  git: >
+    repo=git://github.com/tagomoris/xbuild.git dest=/usr/local/src/xbuild
+    update={{ xbuild_update }}
