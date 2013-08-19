@@ -23,6 +23,24 @@
     - oniguruma-devel
     - net-snmp-devel
     - bzip2-devel
+- name: make php 5.4.18 definition
+  # Remove this task when https://github.com/CHH/php-build/pull/143 is merged.
+  shell: >
+    creates=/usr/local/src/xbuild/var/php-build/share/php-build/definitions/5.4.18
+    chdir=/usr/local/src/xbuild/var/php-build/share/php-build/definitions
+    sed -e 's/5\.4\.17/5.4.18/' 5.5.1 > 5.4.18
+- name: make php 5.5.2 definition
+  # Remove this task when https://github.com/CHH/php-build/pull/146 is merged.
+  shell: >
+    creates=/usr/local/src/xbuild/var/php-build/share/php-build/definitions/5.5.2
+    chdir=/usr/local/src/xbuild/var/php-build/share/php-build/definitions
+    sed -e 's/5\.5\.1/5.5.2/' 5.5.1 > 5.5.2
 - name: install php
   command: /usr/local/src/xbuild/php-install {{ xbuild_php_version }} {{ xbuild_install_dir_prefix }}/php-{{ xbuild_php_version }} creates={{ xbuild_install_dir_prefix }}/php-{{ xbuild_php_version }}
-
+- name: update php.ini
+  template: >
+    src=roles/common/templates/xbuild-php.ini.j2
+    dest={{ xbuild_install_dir_prefix}}/php-{{ xbuild_php_version }}/etc/php.ini
+    owner=root
+    group=root
+    mode=0644
