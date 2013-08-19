@@ -17,11 +17,27 @@ http {
     include       /etc/nginx/mime.types;
     default_type  application/octet-stream;
 
-    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                      '$status $body_bytes_sent "$http_referer" '
-                      '"$http_user_agent" "$http_x_forwarded_for"';
+    log_format  ltsv  'time:$time_iso8601\t'
+                      'msec:$msec\t'
+                      'host:$remote_addr\t'
+                      'forwardedfor:$http_x_forwarded_for\t'
+                      'scheme:$scheme\t'
+                      'method:$request_method\t'
+                      'uri:$request_uri\t'
+                      'protocol:$server_protocol\t'
+                      'status:$status\t'
+                      'size:$body_bytes_sent\t'
+                      'reqsize:$request_length\t'
+                      'referer:$http_referer\t'
+                      'ua:$http_user_agent\t'
+                      'reqtime:$request_time\t'
+                      'content_type:$sent_http_content_type\t'
+                      'cache:$http_x_cache\t'
+                      'runtime:$http_x_runtime\t'
+                      'apptime:$upstream_response_time\t'
+                      'vhost:$host';
 
-    access_log  /var/log/nginx/access.log  main;
+    access_log  /var/log/nginx/access.log  ltsv;
 
     sendfile        on;
     #tcp_nopush     on;
