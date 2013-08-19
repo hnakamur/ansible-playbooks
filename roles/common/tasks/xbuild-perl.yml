@@ -1,0 +1,11 @@
+- name: install dependent packages to build perl
+  yum: name={{ item }} state=present
+  with_items:
+    - gcc
+    - gdbm-devel
+    - db4-devel
+    - bzip2-devel
+    - zlib-devel
+- name: install perl
+  command: /usr/local/src/xbuild/perl-install {{ xbuild_perl_version }} {{ xbuild_install_dir_prefix }}/perl-{{ xbuild_perl_version }} creates={{ xbuild_install_dir_prefix }}/perl-{{ xbuild_perl_version }}
+

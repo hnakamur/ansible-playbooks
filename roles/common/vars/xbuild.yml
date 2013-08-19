@@ -3,3 +3,4 @@ xbuild_ruby_version: 2.0.0-p247
 xbuild_php_version: 5.5.2
 xbuild_python_version: 2.7.5
 xbuild_node_version: v0.10.16
+xbuild_perl_version: 5.18.0
