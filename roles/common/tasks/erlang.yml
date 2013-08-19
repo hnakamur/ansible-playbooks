@@ -1,0 +1,40 @@
+- name: install dependent packages to build Erlang/OTP
+  yum: name={{ item }} state=latest
+  with_items:
+    - gcc
+    - make
+    - ncurses-devel
+    - openssl-devel
+ 
+- name: get Erlang/OTP source
+  get_url: url=http://download.basho.co.jp.cs-ap-e1.ycloud.jp/download/otp_src_{{ erlang_version }}.tar.gz
+    dest=/usr/local/src/otp_src_{{ erlang_version }}.tar.gz
+    sha256sum=da388bc07b8ebdd008f5bb6c3d2c280e358bd188b5aac3ea01e3a7436315abc0
+ 
+- name: unpack Erlang/OTP source
+  command: tar xf /usr/local/src/otp_src_{{ erlang_version }}.tar.gz -C /usr/local/src
+    creates=/usr/local/src/otp_src_{{ erlang_version }}
+ 
+- name: configure Erlang/OTP
+  command: creates=/usr/local/src/otp_src_{{ erlang_version }}/config.status
+    chdir=/usr/local/src/otp_src_{{ erlang_version }}
+    ./configure --prefix=/usr/local/erlang-{{ erlang_version }}
+                --enable-smp-support
+                --enable-halfword-emulator
+                --enable-m64-build
+                --enable-threads
+                --enable-kernel-poll
+                --disable-native-libs
+                --disable-sctp
+                --disable-hipe
+                --without-javac
+
+- name: make Erlang/OTP
+  command: creates=/usr/local/src/otp_src_{{ erlang_version }}/bin/erl
+    chdir=/usr/local/src/otp_src_{{ erlang_version }}
+    make
+
+- name: make install Erlang/OTP
+  command: creates=/usr/local/erlang-{{ erlang_version }}
+    chdir=/usr/local/src/otp_src_{{ erlang_version }}
+    make install
