@@ -15,6 +15,7 @@
 - include: ganglia.yml
 - include: monit.yml
 - include: xbuild.yml
+- include: xbuild-node.yml
 - include: xbuild-ruby.yml
 - include: xbuild-python.yml
 - include: xbuild-php.yml
