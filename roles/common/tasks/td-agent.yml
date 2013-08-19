@@ -1,0 +1,16 @@
+- name: sysctl net.ipv4.tcp_tw_recycle for td-agent
+  sysctl: name=net.ipv4.tcp_tw_recycle value=1 state=present
+- name: sysctl net.ipv4.tcp_tw_reuse for td-agent
+  sysctl: name=net.ipv4.tcp_tw_reuse value=1 state=present
+- name: sysctl net.ipv4.ip_local_port_range for td-agent
+  sysctl: name=net.ipv4.ip_local_port_range value="10240 65535" state=present
+- name: add treasure data rpm repository for td-agent
+  template: src=roles/common/templates/td.repo.j2 dest=/etc/yum.repos.d/td.repo owner=root group=root mode=0644
+- name: install tj-agent
+  yum: name=td-agent state=present enablerepo=treasuredata disable_gpg_check=yes
+- name: td-agent config file
+  template: src=roles/common/templates/td-agent.conf.j2 dest=/etc/td-agent/td-agent.conf owner=root group=root mode=0644
+  notify:
+    - reload td-agent
+- name: tg-agent service
+  service: name=td-agent state=started enabled=yes

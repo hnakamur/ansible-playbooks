@@ -10,6 +10,8 @@
   service: name=php-fpm state=reloaded
 - name: reload spawn-fcgi
   service: name=spawn-fcgi state=reloaded
+- name: reload td-agent
+  service: name=td-agent state=reloaded
 - name: restart gmetad
   service: name=gmetad state=restarted
 - name: restart gmond

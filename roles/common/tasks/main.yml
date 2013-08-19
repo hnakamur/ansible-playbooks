@@ -17,3 +17,4 @@
 - include: xbuild.yml
 - include: xbuild-ruby.yml
 - include: ulimit-num-open-fd.yml
+- include: td-agent.yml
