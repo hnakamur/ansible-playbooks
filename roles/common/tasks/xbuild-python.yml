@@ -1,0 +1,20 @@
+- name: install dependent packages to build python
+  yum: name={{ item }} state=present
+  with_items:
+    - gcc-c++
+    - expat-devel
+    - libGL-devel
+    - tcl-devel
+    - tk-devel
+    - libX11-devel
+    - glibc-devel
+    - tix-devel
+    - bzip2-devel
+    - sqlite-devel
+    - db4-devel
+    - libffi-devel
+    - valgrind-devel
+    - systemtap-sdt-devel
+- name: install python
+  command: /usr/local/src/xbuild/python-install {{ xbuild_python_version }} {{ xbuild_install_dir_prefix }}/python-{{ xbuild_python_version }} creates={{ xbuild_install_dir_prefix }}/python-{{ xbuild_python_version }}
+
