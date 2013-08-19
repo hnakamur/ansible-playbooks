@@ -23,3 +23,4 @@
 - include: ulimit-num-open-fd.yml
 - include: td-agent.yml
 - include: erlang.yml
+- include: go.yml
