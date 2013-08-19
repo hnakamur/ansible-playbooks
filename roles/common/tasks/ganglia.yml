@@ -18,22 +18,22 @@
   get_url: url=http://downloads.sourceforge.net/project/ganglia/ganglia%20monitoring%20core/3.6.0/ganglia-3.6.0.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fganglia%2Ffiles%2Fganglia-web%2F&ts=1376295666&use_mirror=jaist dest=/usr/local/src/ganglia-3.6.0.tar.gz
 - name: build and install ganglia
   shell: |
-    cd /usr/local/src &&
+    chdir=/usr/local/src
     tar xf ganglia-3.6.0.tar.gz &&
     cd ganglia-3.6.0 &&
-    ./configure \
-      --enable-setuid=ganglia \
-      --enable-setgid=ganglia \
-      --with-gmetad \
-      --disable-static \
-      --enable-shared \
-      --sysconfdir=/etc/ganglia \
+    ./configure\
+      --enable-setuid=ganglia\
+      --enable-setgid=ganglia\
+      --with-gmetad\
+      --disable-static\
+      --enable-shared\
+      --sysconfdir=/etc/ganglia\
       --prefix=/usr &&
     make &&
     make install &&
     install -m 755 -o root -g root gmetad/gmetad.init /etc/init.d/gmetad &&
     install -m 755 -o root -g root gmond/gmond.init /etc/init.d/gmond\
-    creates=/usr/local/bin/ganglia-config
+    creates=/usr/bin/ganglia-config
 - name: ganglia rrds directory
   file: path=/var/lib/ganglia/rrds state=directory owner=ganglia group=root mode=0755
 - name: ganglia config directory
@@ -62,10 +62,11 @@
   get_url: url=http://downloads.sourceforge.net/project/ganglia/ganglia-web/3.5.10/ganglia-web-3.5.10.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fganglia%2Ffiles%2Fganglia-web%2F3.5.10%2F&ts=1376295792&use_mirror=jaist dest=/usr/local/src/ganglia-web-3.5.10.tar.gz
 - name: build and install ganglia-web
   shell: |
-    cd /usr/local/src &&
+    chdir=/usr/local/src
     tar xf ganglia-web-3.5.10.tar.gz &&
     cd ganglia-web-3.5.10 &&
-    make install APACHE_USER=nginx GDESTDIR=/usr/share/ganglia
+    make install APACHE_USER=nginx GDESTDIR=/usr/share/ganglia\
+    creates=/usr/share/ganglia 
 - name: ganglia config file for nginx
   template: src=roles/common/templates/ganglia.nginx.ssl.conf.j2 dest=/etc/nginx/conf.d/ssl.location.d/ganglia.conf owner=root group=root mode=0644
   notify:
