@@ -18,3 +18,5 @@
   service: name=ntpd state=restarted
 - name: restart jenkins
   service: name=jenkins state=restarted
+- name: notice you need to reboot
+  pause: prompt="Make sure to reboot to enable change of ulimit nofile"

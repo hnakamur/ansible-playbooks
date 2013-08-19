@@ -16,3 +16,4 @@
 - include: monit.yml
 - include: xbuild.yml
 - include: xbuild-ruby.yml
+- include: ulimit-num-open-fd.yml
