@@ -7,7 +7,12 @@
   command: ntpdate ntp.nict.jp
   when: result.stdout == "0"
 - name: ntp config file
-  template: src=roles/common/templates/ntp.conf.j2 dest=/etc/ntp.conf owner=root group=root mode=0644
+  template: >
+    src=roles/common/templates/ntp.conf.j2
+    dest=/etc/ntp.conf
+    owner=root
+    group=root
+    mode=0644
   notify:
     - restart ntpd
 - name: start ntpd service

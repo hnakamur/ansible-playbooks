@@ -1,4 +1,9 @@
 - name: set limit of the number of opened file descriptors.
-  template: src=roles/common/templates/ulimit-num-open-fd.conf.j2 dest=/etc/security/limits.d/91-nfile.conf owner=root group=root mode=0644
+  template: >
+    src=roles/common/templates/ulimit-num-open-fd.conf.j2
+    dest=/etc/security/limits.d/91-nfile.conf
+    owner=root
+    group=root
+    mode=0644
   notify:
     - notice you need to reboot

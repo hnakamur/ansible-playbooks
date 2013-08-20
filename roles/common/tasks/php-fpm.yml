@@ -3,7 +3,12 @@
 - name: change group of php session directory for nginx
   file: path=/var/lib/php/session state=directory group=nginx
 - name: php-fpm main config file
-  template: src=roles/common/templates/php-fpm.www.conf.j2 dest=/etc/php-fpm.d/www.conf owner=root group=root mode=0644
+  template: >
+    src=roles/common/templates/php-fpm.www.conf.j2
+    dest=/etc/php-fpm.d/www.conf
+    owner=root
+    group=root
+    mode=0644
   notify:
     - reload php-fpm
 - name: start php-fpm service

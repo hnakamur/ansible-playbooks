@@ -13,4 +13,9 @@
     - php-soap
     - php-xml
 - name: php.ini
-  template: src=roles/common/templates/php.ini.j2 dest=/etc/php.ini owner=root group=root mode=0644
+  template: >
+    src=roles/common/templates/php.ini.j2
+    dest=/etc/php.ini
+    owner=root
+    group=root
+    mode=0644

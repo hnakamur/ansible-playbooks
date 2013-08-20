@@ -16,5 +16,8 @@
     - valgrind-devel
     - systemtap-sdt-devel
 - name: install python
-  command: /usr/local/src/xbuild/python-install {{ xbuild_python_version }} {{ xbuild_install_dir_prefix }}/python-{{ xbuild_python_version }} creates={{ xbuild_install_dir_prefix }}/python-{{ xbuild_python_version }}
+  command: >
+    /usr/local/src/xbuild/python-install {{ xbuild_python_version }}
+    {{ xbuild_install_dir_prefix }}/python-{{ xbuild_python_version }}
+    creates={{ xbuild_install_dir_prefix }}/python-{{ xbuild_python_version }}
 

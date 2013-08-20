@@ -1,3 +1,6 @@
 - name: install ruby
-  command: /usr/local/src/xbuild/ruby-install {{ xbuild_ruby_version }} {{ xbuild_install_dir_prefix }}/ruby-{{ xbuild_ruby_version }} creates={{ xbuild_install_dir_prefix }}/ruby-{{ xbuild_ruby_version }}
+  command: >
+    /usr/local/src/xbuild/ruby-install {{ xbuild_ruby_version }}
+    {{ xbuild_install_dir_prefix }}/ruby-{{ xbuild_ruby_version }}
+    creates={{ xbuild_install_dir_prefix }}/ruby-{{ xbuild_ruby_version }}
 
