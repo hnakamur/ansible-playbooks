@@ -120,6 +120,15 @@
     group=root
     mode=0644
 
+- name: lxc config directory
+  file: >
+    path=/var/lib/lxc
+    state=directory
+    owner=root
+    group=root
+    mode=0755
+  when: lxc_version == '0.7.5' #TODO: correct comparison
+
 - name: lxc run directory
   file: >
     path=/var/run/lxc
