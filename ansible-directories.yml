@@ -1,0 +1,24 @@
+# ansible-directories.yml
+# Create directories for ansible playbooks.
+#
+# Example Usage:
+# $ ansible-playbook \
+#      --extra-vars '{"roles":["common", "webservers", "dbservers"]}' \
+#      ansible-directories.yml
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  vars:
+    roles:
+      - common
+  tasks:
+  - name: create vars directories
+    file: path={{ item }} state=directory
+    with_items:
+      - group_vars
+      - host_vars
+  - name: create role directories
+    file: path=roles/{{ item[0] }}/{{ item[1] }} state=directory
+    with_nested:
+      - roles
+      - [ 'tasks', 'handlers', 'templates', 'files', 'vars' ]
