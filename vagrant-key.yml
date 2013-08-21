@@ -1,0 +1,38 @@
+# vagrant-key.yml
+# Download the public key and private key of the vagrant user.
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  sudo: no
+  tasks:
+    - name: ensure .ssh directory exists
+      file: >
+        path={{ lookup('env', 'HOME') }}/.ssh
+        state=directory
+        owner={{ ansible_user_id }}
+        group={{ ansible_user_id }}
+        mode=0700
+
+    - name: download vagrant public key
+      get_url: >
+        url=https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub
+        dest={{ lookup('env', 'HOME') }}/.ssh/vagrant.pub
+    - name: set owner and permission of vagrant public key
+      file: >
+        path={{ lookup('env', 'HOME') }}/.ssh/vagrant.pub
+        state=file
+        owner={{ ansible_user_id }}
+        group={{ ansible_user_id }}
+        mode=0444
+
+    - name: download vagrant private key
+      get_url: >
+        url=https://raw.github.com/mitchellh/vagrant/master/keys/vagrant
+        dest={{ lookup('env', 'HOME') }}/.ssh/vagrant
+    - name: set owner and permission of vagrant private key
+      file: >
+        path={{ lookup('env', 'HOME') }}/.ssh/vagrant
+        state=file
+        owner={{ ansible_user_id }}
+        group={{ ansible_user_id }}
+        mode=0400

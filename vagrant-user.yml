@@ -1,0 +1,35 @@
+# vagrant-user.yml
+# Create the vagrant user to guest linux systems.
+#
+# Preresiquite:
+# $ ansible-playbook -l localhost vagrant-key.yml
+#
+# Example usage:
+# $ ansible-playbook -l centos01 -k -u root vagrant-user.yml
+# $ ansible-playbook -l ubuntu01 -kK -u ubuntu vagrant-user.yml
+
+- hosts: all # please override with -l option
+  sudo: yes
+  tasks:
+    - name: create vagrant group
+      group: name=vagrant gid=65000 state=present
+    - name: create vagrant user
+      user: name=vagrant uid=65000 group=vagrant state=present
+    - name: create .ssh directory for vagrant user
+      file: >
+        path=/home/vagrant/.ssh
+        state=directory
+        owner=vagrant
+        group=vagrant
+        mode=0700
+    - name: add authorized_keys for vagrant user
+      authorized_key: user=vagrant key="{{ item }}"
+      with_file:
+        - "{{ lookup('env', 'HOME') }}/.ssh/vagrant.pub"
+    - name: check vagrant is in sudoers
+      shell: grep -q ^vagrant /etc/sudoers; echo $?
+      register: result
+    - name: add vagrant user to sudoers
+      shell: |
+        echo "vagrant ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+      when: result.stdout != "0"
