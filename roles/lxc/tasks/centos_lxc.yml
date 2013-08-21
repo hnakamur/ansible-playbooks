@@ -1,2 +1,169 @@
+- name: install dependent packages to build lxc
+  yum: name={{ item }} state=present
+  with_items:
+    - libcap-devel
+    - pkgconfig
+    - rpm-build
+    - docbook2X
+    - dnsmasq
+    - bridge-utils
+    - dpkg
+    - debootstrap
+  when: lxc_version == '0.9.0' #TODO: correct comparison
+
+- name: install dependent packages to build lxc
+  yum: name={{ item }} state=present
+  with_items:
+    - libcap-devel
+    - pkgconfig
+    - rpm-build
+    - docbook-utils
+    - dnsmasq
+    - bridge-utils
+    - dpkg
+    - debootstrap
+  when: lxc_version == '0.7.5' #TODO: correct comparison
+
+- name: download lxc source
+  get_url: >
+    url=http://lxc.sourceforge.net/download/lxc/lxc-{{ lxc_version }}.tar.gz
+    dest=/usr/local/src/lxc-{{ lxc_version }}.tar.gz
+    sha256sum={{ lxc_tarball_sha256sum }}
+
+- name: unpack lxc source
+  command: >
+    creates=/usr/local/src/lxc-{{ lxc_version }}
+    tar xf /usr/local/src/lxc-{{ lxc_version }}.tar.gz -C /usr/local/src
+
+- name: configure lxc source
+  command: >
+    creates=/usr/local/src/lxc-{{ lxc_version }}/config.status
+    chdir=/usr/local/src/lxc-{{ lxc_version }}
+    ./configure
+
+- name: build lxc source
+  command: >
+    creates=/root/rpmbuild/RPMS/x86_64/lxc-{{ lxc_version }}-1.el6.x86_64.rpm
+    chdir=/usr/local/src/lxc-{{ lxc_version }}
+    make rpm
+  when: lxc_version == '0.9.0' #TODO: correct comparison
+
+- name: build lxc source
+  command: >
+    creates=/root/rpmbuild/RPMS/x86_64/lxc-{{ lxc_version }}-1.x86_64.rpm
+    chdir=/usr/local/src/lxc-{{ lxc_version }}
+    make rpm
+  when: lxc_version == '0.7.5' #TODO: correct comparison
+
+- name: check lxc-libs is installed
+  shell: rpm -q lxc-libs > /dev/null; echo $?
+  register: result
+
+- name: install lxc-libs
+  command: |
+    rpm -i /root/rpmbuild/RPMS/x86_64/lxc-libs-{{ lxc_version }}-1.el6.x86_64.rpm
+  when: result.stdout != '0' and lxc_version == '0.9.0' #TODO: correct comparison
+
+- name: check lxc is installed
+  shell: rpm -q lxc > /dev/null; echo $?
+  register: result
+
 - name: install lxc
-  debug: msg="not implemented yet"
+  command: |
+    rpm -i /root/rpmbuild/RPMS/x86_64/lxc-{{ lxc_version }}-1.el6.x86_64.rpm
+  when: result.stdout != '0' and lxc_version == '0.9.0' #TODO: correct comparison
+
+- name: install lxc
+  command: |
+    rpm -i /root/rpmbuild/RPMS/x86_64/lxc-{{ lxc_version }}-1.x86_64.rpm
+  when: result.stdout != '0' and lxc_version == '0.7.5' #TODO: correct comparison
+
+- name: centos container definition for lxc
+  template: >
+    src=roles/lxc/templates/ubuntu_lxc.centos.j2
+    dest=/usr/share/lxc/templates/lxc-centos
+    owner=root
+    group=root
+    mode=0755
+  when: lxc_version == '0.9.0' #TODO: correct comparison
+
+- name: centos container definition for lxc
+  template: >
+    src=roles/lxc/templates/ubuntu_lxc.centos.j2
+    dest=/usr/lib64/lxc/templates/lxc-centos
+    owner=root
+    group=root
+    mode=0755
+  when: lxc_version == '0.7.5' #TODO: correct comparison
+
+- name: lxc default config directory
+  file: >
+    path=/etc/lxc
+    state=directory
+    owner=root
+    group=root
+    mode=0755
+
+- name: lxc default config
+  template: >
+    src=roles/lxc/templates/centos_lxc.default.conf.j2
+    dest=/etc/lxc/default.conf
+    owner=root
+    group=root
+    mode=0644
+
+- name: lxc dnsmasq config
+  template: >
+    src=roles/lxc/templates/centos_lxc.dnsmasq.conf.j2
+    dest=/etc/dnsmasq.d/lxc.conf
+    owner=root
+    group=root
+    mode=0644
+
+- name: lxc run directory
+  file: >
+    path=/var/run/lxc
+    state=directory
+    owner=root
+    group=root
+    mode=0755
+
+- name: lxc-net config for init script
+  template: >
+    src=roles/lxc/templates/centos_lxc.lxc-net.sysconfig.j2
+    dest=/etc/sysconfig/lxc-net
+    owner=root
+    group=root
+    mode=0644
+  notify:
+    - restart lxc-net
+
+- name: lxc-net init script
+  template: >
+    src=roles/lxc/templates/centos_lxc.lxc-net.init.j2
+    dest=/etc/init.d/lxc-net
+    owner=root
+    group=root
+    mode=0755
+  notify:
+    - restart lxc-net
+
+- name: lxc-net service
+  service: name=lxc-net state=started enabled=yes
+
+- name: cgroup directory for lxc
+  file: >
+    path=/cgroup
+    state=directory
+    owner=root
+    group=root
+    mode=0755
+
+- name: mount cgroup for lxc
+  mount: >
+    src=/lxc
+    name=/cgroup
+    fstype=cgroup
+    dump=0
+    passno=0
+    state=mounted

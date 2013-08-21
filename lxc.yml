@@ -1,12 +1,15 @@
-- hosts: localhost
-  connection: local
-  roles:
-    - lxc
+- hosts: all
   tasks:
     - group_by: key={{ ansible_distribution }}
+      changed_when: false
 
 - hosts: CentOS
   gather_facts: false
+  sudo: yes
+  roles:
+    - lxc
+  vars_files:
+    - roles/lxc/vars/lxc.yml
   tasks:
     - include: roles/lxc/tasks/centos_lxc.yml
 
