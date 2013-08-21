@@ -1,0 +1,17 @@
+- hosts: localhost
+  connection: local
+  roles:
+    - lxc
+  tasks:
+    - group_by: key={{ ansible_distribution }}
+
+- hosts: CentOS
+  gather_facts: false
+  tasks:
+    - include: roles/lxc/tasks/centos_lxc.yml
+
+- hosts: Ubuntu
+  gather_facts: false
+  sudo: yes
+  tasks:
+    - include: roles/lxc/tasks/ubuntu_lxc.yml
