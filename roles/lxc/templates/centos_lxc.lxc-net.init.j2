@@ -14,7 +14,7 @@
 ### END INIT INFO
 
 # Source function library.
-. /etc/init.d/functions
+. /etc/rc.d/init.d/functions
 
 USE_LXC_BRIDGE="false"
 LXC_BRIDGE="lxcbr0"
@@ -23,6 +23,7 @@ LXC_NETMASK="255.255.255.0"
 LXC_NETWORK="10.0.3.0/24"
 LXC_DHCP_RANGE="10.0.3.2,10.0.3.254"
 LXC_DHCP_MAX="253"
+LXC_OUT_IF="eth0"
 varrun="/var/run/lxc"
 PID_FILE=${varrun}/dnsmasq.pid
 
@@ -42,13 +43,13 @@ rh_status_q() {
 
 case "$1" in
   start)
-    rh_status_q && exit 0
+    rh_status_q
 
     [ "x$USE_LXC_BRIDGE" = "xtrue" ] || { stop; exit 0; }
 
     cleanup() {
       # dnsmasq failed to start, clean up the bridge
-#                iptables -t nat -D OUTPUT -s ${LXC_NETWORK} -j MASQUERADE || true
+      iptables -t nat -D POSTROUTING -o ${LXC_OUT_IF} -s ${LXC_NETWORK} -j MASQUERADE || true
       ifconfig ${LXC_BRIDGE} down || true
       brctl delbr ${LXC_BRIDGE} || true
     }
@@ -66,13 +67,13 @@ case "$1" in
     mkdir -p ${varrun}
     brctl addbr ${LXC_BRIDGE}
     ifconfig ${LXC_BRIDGE} ${LXC_ADDR} netmask ${LXC_NETMASK} up
-    iptables -t nat -A OUTPUT -s ${LXC_NETWORK} ! -d ${LXC_NETWORK} -j MASQUERADE
-#        dnsmasq -u lxc-dnsmasq --strict-order --bind-interfaces --pid-file=${varrun}/dnsmasq.pid --conf-file= --listen-address ${LXC_ADDR} --dhcp-range ${LXC_DHCP_RANGE} --dhcp-lease-max=${LXC_DHCP_MAX} --dhcp-no-override --except-interface=lo --interface=${LXC_BRIDGE} || cleanup
+    iptables -t nat -A POSTROUTING -o ${LXC_OUT_IF} -s ${LXC_NETWORK} -j MASQUERADE
+#    dnsmasq -u lxc-dnsmasq --strict-order --bind-interfaces --pid-file=${varrun}/dnsmasq.pid --conf-file= --listen-address ${LXC_ADDR} --dhcp-range ${LXC_DHCP_RANGE} --dhcp-lease-max=${LXC_DHCP_MAX} --dhcp-no-override --except-interface=lo --interface=${LXC_BRIDGE} || cleanup
     dnsmasq -u nobody --strict-order --bind-interfaces --pid-file=${varrun}/dnsmasq.pid --conf-file= --listen-address ${LXC_ADDR} --dhcp-range ${LXC_DHCP_RANGE} --dhcp-lease-max=${LXC_DHCP_MAX} --dhcp-no-override --except-interface=lo --interface=${LXC_BRIDGE} || cleanup
     touch ${varrun}/network_up
     ;;
   stop)
-    rh_status_q && exit 0
+    rh_status_q
 
     [ -f "${varrun}/network_up" ] || exit 0;
     # if $LXC_BRIDGE has attached interfaces, don't shut it down
@@ -80,7 +81,7 @@ case "$1" in
 
     if [ -d /sys/class/net/${LXC_BRIDGE} ]; then
       ifconfig ${LXC_BRIDGE} down
-#                iptables -t nat -D OUTPUT -s ${LXC_NETWORK} -j MASQUERADE || true
+      iptables -t nat -D POSTROUTING -o ${LXC_OUT_IF} -s ${LXC_NETWORK} -j MASQUERADE || true
       pid=`cat ${varrun}/dnsmasq.pid 2>/dev/null` && kill -9 $pid || true
       rm -f ${varrun}/dnsmasq.pid
       brctl delbr ${LXC_BRIDGE}

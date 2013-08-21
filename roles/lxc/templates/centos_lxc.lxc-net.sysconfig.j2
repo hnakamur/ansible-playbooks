@@ -1,8 +1,4 @@
-# MIRROR to be used by ubuntu template at container creation:
-# Leaving it undefined is fine
-#MIRROR="http://archive.ubuntu.com/ubuntu"
-# or  
-#MIRROR="http://<host-ip-addr>:3142/archive.ubuntu.com/ubuntu"
+# {{ ansible_managed }}
 
 # LXC_AUTO - whether or not to start containers symlinked under
 # /etc/lxc/auto
@@ -26,5 +22,6 @@ LXC_NETMASK="255.255.255.0"
 LXC_NETWORK="10.0.3.0/24"
 LXC_DHCP_RANGE="10.0.3.2,10.0.3.254"
 LXC_DHCP_MAX="253"
+LXC_OUT_IF="eth0"
         
 LXC_SHUTDOWN_TIMEOUT=120
