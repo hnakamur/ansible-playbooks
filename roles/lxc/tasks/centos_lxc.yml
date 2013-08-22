@@ -89,7 +89,7 @@
 
 - name: centos container definition for lxc
   template: >
-    src=roles/lxc/templates/ubuntu_lxc.centos.j2
+    src=roles/lxc/templates/centos_lxc.centos.j2
     dest=/usr/lib64/lxc/templates/lxc-centos
     owner=root
     group=root
