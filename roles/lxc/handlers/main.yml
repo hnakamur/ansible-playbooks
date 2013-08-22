@@ -2,5 +2,7 @@
   service: name=dnsmasq state=reloaded
 - name: restart lxc-net
   service: name=lxc-net state=restarted
+- name: restart lxc-auto
+  service: name=lxc-auto state=restarted
 - name: restart network
   service: name=network state=restarted

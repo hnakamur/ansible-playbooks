@@ -185,6 +185,19 @@
 - name: lxc-net service
   service: name=lxc-net state=started enabled=yes
 
+- name: lxc-auto init script
+  template: >
+    src=roles/lxc/templates/centos_lxc.lxc-auto.init.j2
+    dest=/etc/init.d/lxc-auto
+    owner=root
+    group=root
+    mode=0755
+  notify:
+    - restart lxc-auto
+
+- name: lxc-auto service
+  service: name=lxc-auto state=started enabled=yes
+
 - name: cgroup directory for lxc
   file: >
     path=/cgroup
