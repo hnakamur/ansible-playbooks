@@ -112,13 +112,28 @@
     group=root
     mode=0644
 
-- name: lxc dnsmasq config
+- name: dnsmasq main config
   template: >
     src=roles/lxc/templates/centos_lxc.dnsmasq.conf.j2
+    dest=/etc/dnsmasq.conf
+    owner=root
+    group=root
+    mode=0644
+  notify:
+    - reload dnsmasq
+
+- name: lxc dnsmasq config
+  template: >
+    src=roles/lxc/templates/centos_lxc.dnsmasq.lxc.conf.j2
     dest=/etc/dnsmasq.d/lxc.conf
     owner=root
     group=root
     mode=0644
+  notify:
+    - reload dnsmasq
+
+- name: dnsmasq service
+  service: name=dnsmasq state=started enabled=yes
 
 - name: lxc config directory
   file: >

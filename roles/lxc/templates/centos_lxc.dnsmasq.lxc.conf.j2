@@ -1,0 +1,17 @@
+# {{ ansible_managed }}
+# Tell any system-wide dnsmasq instance to make sure to bind to interfaces
+# instead of listening on 0.0.0.0
+# WARNING: changes to this file will get lost if lxc is removed.
+domain-needed
+domain=lxc
+bogus-priv
+
+#listen-address=127.0.0.1
+#listen-address=10.0.3.1
+#bind-interfaces
+#except-interface=lo
+
+expand-hosts
+dhcp-range=10.0.3.50,10.0.3.250
+#dhcp-lease-max=253
+#dhcp-no-override
