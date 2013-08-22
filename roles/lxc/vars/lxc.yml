@@ -1,3 +1,4 @@
+lxc_local_domain: internal.example.com
 #lxc_version: 0.9.0
 #lxc_tarball_sha256sum: 1e1767eae6cc5fbf892c0e193d25da420ba19f2db203716c38f7cdea3b654120
 lxc_version: 0.7.5
