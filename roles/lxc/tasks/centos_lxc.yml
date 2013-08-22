@@ -1,3 +1,6 @@
+- name: enable ip forwarding for lxc
+  sysctl: name=net.ipv4.ip_forward value=1 state=present
+
 - name: install dependent packages to build lxc
   yum: name={{ item }} state=present
   with_items:

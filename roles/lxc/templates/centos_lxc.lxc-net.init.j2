@@ -69,8 +69,6 @@ case "$1" in
     fi
 
     # set up the lxc network
-    echo 1 > /proc/sys/net/ipv4/ip_forward
-    mkdir -p ${varrun}
     brctl addbr ${LXC_BRIDGE}
     ifconfig ${LXC_BRIDGE} ${LXC_ADDR} netmask ${LXC_NETMASK} up
     iptables -t nat -A POSTROUTING -o ${LXC_OUT_IF} -s ${LXC_NETWORK} -j MASQUERADE
