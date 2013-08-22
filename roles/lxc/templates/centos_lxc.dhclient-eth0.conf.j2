@@ -1,0 +1,7 @@
+# {{ ansible_managed }}
+
+# use dnsmasq dns server first.
+prepend domain-name-servers 10.0.3.1;
+
+send vendor-class-identifier "anaconda-Linux {{ ansible_kernel }} {{ ansible_machine }}";
+timeout 45;

@@ -135,6 +135,16 @@
 - name: dnsmasq service
   service: name=dnsmasq state=started enabled=yes
 
+- name: lxc dhclient config
+  template: >
+    src=roles/lxc/templates/centos_lxc.dhclient-eth0.conf.j2
+    dest=/etc/dhcp/dhclient-eth0.conf
+    owner=root
+    group=root
+    mode=0644
+  notify:
+    - restart network
+
 - name: lxc config directory
   file: >
     path=/var/lib/lxc

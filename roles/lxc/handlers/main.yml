@@ -2,5 +2,5 @@
   service: name=dnsmasq state=reloaded
 - name: restart lxc-net
   service: name=lxc-net state=restarted
-- name: update resolvconf
-  command: resolvconf -u
+- name: restart network
+  service: name=network state=restarted
