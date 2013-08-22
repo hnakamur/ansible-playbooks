@@ -50,20 +50,6 @@ configure_centos()
 
    # configure the network using the dhcp
     cat <<EOF > ${rootfs_path}/etc/sysconfig/network-scripts/ifcfg-eth0
-#DEVICE=eth0
-#BOOTPROTO=none
-#ONBOOT=yes
-#TYPE=Ethernet
-#USERCTL=yes
-#PEERDNS=yes
-#IPV6INIT=no
-#IPADDR=10.0.3.5
-#NETMASK=255.255.255.0
-#DNS1=10.0.3.1
-#DNS2=10.0.2.3
-#GATEWAY=10.0.3.1
-#DHCP_HOSTNAME="${name}"
-
 DEVICE=eth0
 BOOTPROTO=dhcp
 ONBOOT=yes
@@ -71,18 +57,18 @@ TYPE=Ethernet
 USERCTL=yes
 PEERDNS=yes
 IPV6INIT=no
+DNS1=10.0.3.1
+DNS2=10.0.2.3
 DHCP_HOSTNAME="${name}"
 EOF
 #DHCP_HOSTNAME="$(if [ -x /etc/hostname ] && [ ! -z `cat /etc/hostname` ] ; then cat /etc/hostname ; else hostname ; fi )"
 
     # set the dns
-    cat > ${rootfs_path}/etc/resolv.conf << END
-nameserver 10.0.3.1
-nameserver 10.0.2.3
-## Google public DNS
-#nameserver 8.8.8.8
-#nameserver 8.8.4.4
-END
+#    cat > ${rootfs_path}/etc/resolv.conf << END
+### Google public DNS
+##nameserver 8.8.8.8
+##nameserver 8.8.4.4
+#END
 
 
     # set the hostname
@@ -93,7 +79,7 @@ EOF
 
     # set minimal hosts
     cat <<EOF > $rootfs_path/etc/hosts
-127.0.0.1 localhost $name
+127.0.0.1 localhost
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
 EOF
 
