@@ -1,5 +1,5 @@
-- name: reload dnsmasq
-  service: name=dnsmasq state=reloaded
+- name: restart dnsmasq
+  service: name=dnsmasq state=restarted
 - name: restart lxc-net
   service: name=lxc-net state=restarted
 - name: restart lxc-auto

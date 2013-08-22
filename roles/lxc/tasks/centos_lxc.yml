@@ -120,7 +120,7 @@
     group=root
     mode=0644
   notify:
-    - reload dnsmasq
+    - restart dnsmasq
 
 - name: lxc dnsmasq config
   template: >
@@ -130,7 +130,7 @@
     group=root
     mode=0644
   notify:
-    - reload dnsmasq
+    - restart dnsmasq
 
 - name: dnsmasq service
   service: name=dnsmasq state=started enabled=yes
