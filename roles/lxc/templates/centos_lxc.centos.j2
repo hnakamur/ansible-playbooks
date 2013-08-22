@@ -108,7 +108,7 @@ EOF
     sed -i 's/^.*dev.pts.*$/#\0/' ${rootfs_path}/etc/rc.d/rc.sysinit
 
     sed -i 's/^#baseurl/baseurl/g' ${rootfs_path}/etc/yum.repos.d/CentOS-Base.repo
-    sed -i "s/\$releasever/$release.$releaseminor/g" ${rootfs_path}/etc/yum.repos.d/CentOS-Base.repo
+    sed -i "s/\\$releasever/$release.$releaseminor/g" ${rootfs_path}/etc/yum.repos.d/CentOS-Base.repo
     sed -i '115,126s/^/#/' ${rootfs_path}/etc/rc.d/init.d/halt
 
     chroot ${rootfs_path} chkconfig udev-post off
