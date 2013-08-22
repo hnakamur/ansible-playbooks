@@ -16,7 +16,6 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
-USE_LXC_BRIDGE="false"
 LXC_BRIDGE="lxcbr0"
 LXC_ADDR="10.0.3.1"
 LXC_NETMASK="255.255.255.0"
@@ -28,9 +27,57 @@ if [ -f /etc/sysconfig/lxc-net ]; then
   . /etc/sysconfig/lxc-net
 fi
 
-rc=0
+setup_network() {
+  brctl addbr ${LXC_BRIDGE}
+  ifconfig ${LXC_BRIDGE} ${LXC_ADDR} netmask ${LXC_NETMASK} up
+  iptables -t nat -A POSTROUTING -o ${LXC_OUT_IF} -s ${LXC_NETWORK} -j MASQUERADE
+  iptables -I INPUT -i ${LXC_BRIDGE} -p tcp --dport 53 -j ACCEPT
+  iptables -I INPUT -i ${LXC_BRIDGE} -p udp --dport 53 -j ACCEPT
+  iptables -I INPUT -i ${LXC_BRIDGE} -p udp --sport 67:68 --dport 67:68 -j ACCEPT
+  iptables -I FORWARD -o ${LXC_OUT_IF} -j ACCEPT
+  iptables -I FORWARD -i ${LXC_OUT_IF} -j ACCEPT
+}
 
-rh_status() {
+teardown_network() {
+  ifconfig ${LXC_BRIDGE} down
+  # dnsmasq failed to start, clean up the bridge
+  iptables -t nat -D POSTROUTING -o ${LXC_OUT_IF} -s ${LXC_NETWORK} -j MASQUERADE
+  iptables -D INPUT -i ${LXC_BRIDGE} -p tcp --dport 53 -j ACCEPT
+  iptables -D INPUT -i ${LXC_BRIDGE} -p udp --dport 53 -j ACCEPT
+  iptables -D INPUT -i ${LXC_BRIDGE} -p udp --sport 67:68 --dport 67:68 -j ACCEPT
+  iptables -D FORWARD -o ${LXC_OUT_IF} -j ACCEPT
+  iptables -D FORWARD -i ${LXC_OUT_IF} -j ACCEPT
+  ifconfig ${LXC_BRIDGE} down
+  brctl delbr ${LXC_BRIDGE}
+}
+
+start() {
+  if [ -d /sys/class/net/${LXC_BRIDGE} ]; then
+    if [ ! -f ${varrun}/network_up ]; then
+      # bridge exists, but we didn't start it
+      exit 0
+    fi
+    exit 0
+  fi
+
+  # set up the lxc network
+  setup_network
+  touch ${varrun}/network_up
+}
+
+stop() {
+  [ -f "${varrun}/network_up" ] || exit 0
+
+  # if $LXC_BRIDGE has attached interfaces, don't shut it down
+  [ -t "$(find /sys/class/net/${LXC_BRIDGE}/brif/ -mindepth 1 -print -quit)" ] && exit 0
+
+  if [ -d /sys/class/net/${LXC_BRIDGE} ]; then
+    teardown_network
+  fi
+  rm -f ${varrun}/network_up
+}
+
+status() {
   if [ -f ${varrun}/network_up ]; then
     echo $0 is up
   else
@@ -38,77 +85,25 @@ rh_status() {
   fi
 }
 
-rh_status_q() {
-  rh_status >/dev/null 2>&1
-}
+rc=0
 
 case "$1" in
-  start)
-    rh_status_q
-
-    [ "x$USE_LXC_BRIDGE" = "xtrue" ] || { stop; exit 0; }
-
-    cleanup() {
-      # dnsmasq failed to start, clean up the bridge
-      iptables -t nat -D POSTROUTING -o ${LXC_OUT_IF} -s ${LXC_NETWORK} -j MASQUERADE
-      iptables -D INPUT -i ${LXC_BRIDGE} -p tcp --dport 53 -j ACCEPT
-      iptables -D INPUT -i ${LXC_BRIDGE} -p udp --dport 53 -j ACCEPT
-      iptables -D INPUT -i ${LXC_BRIDGE} -p udp --sport 67:68 --dport 67:68 -j ACCEPT
-      iptables -D FORWARD -o ${LXC_OUT_IF} -j ACCEPT
-      iptables -D FORWARD -i ${LXC_OUT_IF} -j ACCEPT
-      ifconfig ${LXC_BRIDGE} down
-      brctl delbr ${LXC_BRIDGE}
-    }
-
-    if [ -d /sys/class/net/${LXC_BRIDGE} ]; then
-      if [ ! -f ${varrun}/network_up ]; then
-        # bridge exists, but we didn't start it
-        stop;
-      fi
-      exit 0;
-    fi
-
-    # set up the lxc network
-    brctl addbr ${LXC_BRIDGE}
-    ifconfig ${LXC_BRIDGE} ${LXC_ADDR} netmask ${LXC_NETMASK} up
-    iptables -t nat -A POSTROUTING -o ${LXC_OUT_IF} -s ${LXC_NETWORK} -j MASQUERADE
-    iptables -I INPUT -i ${LXC_BRIDGE} -p tcp --dport 53 -j ACCEPT
-    iptables -I INPUT -i ${LXC_BRIDGE} -p udp --dport 53 -j ACCEPT
-    iptables -I INPUT -i ${LXC_BRIDGE} -p udp --sport 67:68 --dport 67:68 -j ACCEPT
-    iptables -I FORWARD -o ${LXC_OUT_IF} -j ACCEPT
-    iptables -I FORWARD -i ${LXC_OUT_IF} -j ACCEPT
-    touch ${varrun}/network_up
-    ;;
-  stop)
-    rh_status_q
-
-    [ -f "${varrun}/network_up" ] || exit 0;
-    # if $LXC_BRIDGE has attached interfaces, don't shut it down
-    ls /sys/class/net/${LXC_BRIDGE}/brif/* > /dev/null 2>&1 && exit 0;
-
-    if [ -d /sys/class/net/${LXC_BRIDGE} ]; then
-      ifconfig ${LXC_BRIDGE} down
-      iptables -t nat -D POSTROUTING -o ${LXC_OUT_IF} -s ${LXC_NETWORK} -j MASQUERADE
-      iptables -D INPUT -i ${LXC_BRIDGE} -p tcp --dport 53 -j ACCEPT
-      iptables -D INPUT -i ${LXC_BRIDGE} -p udp --dport 53 -j ACCEPT
-      iptables -D INPUT -i ${LXC_BRIDGE} -p udp --sport 67:68 --dport 67:68 -j ACCEPT
-      iptables -D FORWARD -o ${LXC_OUT_IF} -j ACCEPT
-      iptables -D FORWARD -i ${LXC_OUT_IF} -j ACCEPT
-      brctl delbr ${LXC_BRIDGE}
-    fi
-    rm -f ${varrun}/network_up
-    ;;
-  status)
-    rh_status
-    ;;
-  restart)
-    $0 stop
-    $0 start
-    rc=$?
-    ;;
-  *)
-    echo $"Usage: $0 {start|stop|status|restart}"
-    exit 2
+start)
+  start
+  ;;
+stop)
+  stop
+  ;;
+status)
+  status
+  ;;
+restart)
+  stop
+  start
+  ;;
+*)
+  echo $"Usage: $0 {start|stop|status|restart}"
+  exit 2
 esac
 
 exit $rc
