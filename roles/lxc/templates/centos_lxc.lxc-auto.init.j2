@@ -11,6 +11,8 @@
 . /etc/rc.d/init.d/functions
 
 LXC_AUTO_DIR=/etc/lxc/auto
+LXC_SHUTDOWN_TIMEOUT=120
+
 [ -f /etc/sysconfig/lxc-auto ] && . /etc/sysconfig/lxc-auto
 
 auto_containers() {
@@ -23,19 +25,12 @@ start() {
   done
 }
 
-all_stopped() {
-  for n in `auto_containers`; do
-    lxc-info -sn $n | grep -q RUNNING && exit 1
-  done
-  exit 0
-}
-
 stop() {
   for n in `auto_containers`; do
     lxc-info -sn $n | grep -q RUNNING && lxc-stop -n $n
   done
-  until all_stopped; do
-    sleep 3
+  for n in `auto_containers`; do
+    lxc-wait -n $n -s STOPPED -t $LXC_SHUTDOWN_TIMEOUT
   done
 }
 
