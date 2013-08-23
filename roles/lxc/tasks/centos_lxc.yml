@@ -12,20 +12,6 @@
     - bridge-utils
     - dpkg
     - debootstrap
-  when: lxc_version == '0.9.0' #TODO: correct comparison
-
-- name: install dependent packages to build lxc
-  yum: name={{ item }} state=present
-  with_items:
-    - libcap-devel
-    - pkgconfig
-    - rpm-build
-    - docbook-utils
-    - dnsmasq
-    - bridge-utils
-    - dpkg
-    - debootstrap
-  when: lxc_version == '0.7.5' #TODO: correct comparison
 
 - name: download lxc source
   get_url: >
@@ -49,14 +35,6 @@
     creates=/root/rpmbuild/RPMS/x86_64/lxc-{{ lxc_version }}-1.el6.x86_64.rpm
     chdir=/usr/local/src/lxc-{{ lxc_version }}
     make rpm
-  when: lxc_version == '0.9.0' #TODO: correct comparison
-
-- name: build lxc source
-  command: >
-    creates=/root/rpmbuild/RPMS/x86_64/lxc-{{ lxc_version }}-1.x86_64.rpm
-    chdir=/usr/local/src/lxc-{{ lxc_version }}
-    make rpm
-  when: lxc_version == '0.7.5' #TODO: correct comparison
 
 - name: check lxc-libs is installed
   shell: rpm -q lxc-libs > /dev/null; echo $?
@@ -65,7 +43,7 @@
 - name: install lxc-libs
   command: |
     rpm -i /root/rpmbuild/RPMS/x86_64/lxc-libs-{{ lxc_version }}-1.el6.x86_64.rpm
-  when: result.stdout != '0' and lxc_version == '0.9.0' #TODO: correct comparison
+  when: result.stdout != '0'
 
 - name: check lxc is installed
   shell: rpm -q lxc > /dev/null; echo $?
@@ -74,12 +52,7 @@
 - name: install lxc
   command: |
     rpm -i /root/rpmbuild/RPMS/x86_64/lxc-{{ lxc_version }}-1.el6.x86_64.rpm
-  when: result.stdout != '0' and lxc_version == '0.9.0' #TODO: correct comparison
-
-- name: install lxc
-  command: |
-    rpm -i /root/rpmbuild/RPMS/x86_64/lxc-{{ lxc_version }}-1.x86_64.rpm
-  when: result.stdout != '0' and lxc_version == '0.7.5' #TODO: correct comparison
+  when: result.stdout != '0'
 
 - name: centos container definition for lxc
   template: >
@@ -88,16 +61,6 @@
     owner=root
     group=root
     mode=0755
-  when: lxc_version == '0.9.0' #TODO: correct comparison
-
-- name: centos container definition for lxc
-  template: >
-    src=roles/lxc/templates/centos_lxc.centos.j2
-    dest=/usr/lib64/lxc/templates/lxc-centos
-    owner=root
-    group=root
-    mode=0755
-  when: lxc_version == '0.7.5' #TODO: correct comparison
 
 - name: lxc default config directory
   file: >
@@ -147,15 +110,6 @@
     mode=0644
   notify:
     - restart network
-
-- name: lxc config directory
-  file: >
-    path=/var/lib/lxc
-    state=directory
-    owner=root
-    group=root
-    mode=0755
-  when: lxc_version == '0.7.5' #TODO: correct comparison
 
 - name: lxc run directory
   file: >
