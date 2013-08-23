@@ -218,10 +218,12 @@
     mode=0755
 
 - name: mount cgroup for lxc
+  # cannot create subdirectories if opts contains net_prio
   mount: >
     src=/lxc
     name=/cgroup
     fstype=cgroup
+    opts="cpuset,ns,cpu,cpuacct,memory,devices,freezer,net_cls,blkio,perf_event"
     dump=0
     passno=0
     state=mounted
