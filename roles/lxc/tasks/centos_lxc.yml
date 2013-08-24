@@ -12,7 +12,7 @@
     - bridge-utils
     - dpkg
     - debootstrap
-  when: lxc_version == '0.9.0' #TODO: correct comparison
+  when: lxc_version == '0.9.0'
 
 - name: install dependent packages to build lxc
   yum: name={{ item }} state=present
@@ -25,7 +25,7 @@
     - bridge-utils
     - dpkg
     - debootstrap
-  when: lxc_version == '0.7.5' #TODO: correct comparison
+  when: lxc_version in ['0.7.5', '0.8.0']
 
 - name: download lxc source
   get_url: >
@@ -43,29 +43,45 @@
     creates=/usr/local/src/lxc-{{ lxc_version }}/config.status
     chdir=/usr/local/src/lxc-{{ lxc_version }}
     ./configure
+  when: lxc_version != '0.8.0'
+
+- name: configure lxc source
+  command: >
+    creates=/usr/local/src/lxc-{{ lxc_version }}/config.status
+    chdir=/usr/local/src/lxc-{{ lxc_version }}
+    ./configure --disable-apparmor
+  when: lxc_version == '0.8.0'
+
+- name: copy lxc.spec for lxc
+  # we need to pass --disable-apparmor option to configure for lxc 0.8.0
+  copy: >
+    src=roles/lxc/files/lxc-0.8.0.spec
+    dest=/usr/local/src/lxc-{{ lxc_version }}/lxc.spec
+  when: lxc_version == '0.8.0'
 
 - name: build lxc source
   command: >
     creates=/root/rpmbuild/RPMS/x86_64/lxc-{{ lxc_version }}-1.el6.x86_64.rpm
     chdir=/usr/local/src/lxc-{{ lxc_version }}
     make rpm
-  when: lxc_version == '0.9.0' #TODO: correct comparison
+  when: lxc_version in ['0.8.0', '0.9.0']
 
 - name: build lxc source
   command: >
     creates=/root/rpmbuild/RPMS/x86_64/lxc-{{ lxc_version }}-1.x86_64.rpm
     chdir=/usr/local/src/lxc-{{ lxc_version }}
     make rpm
-  when: lxc_version == '0.7.5' #TODO: correct comparison
+  when: lxc_version == '0.7.5'
 
 - name: check lxc-libs is installed
   shell: rpm -q lxc-libs > /dev/null; echo $?
   register: result
+  when: lxc_version in ['0.8.0', '0.9.0']
 
 - name: install lxc-libs
   command: |
     rpm -i /root/rpmbuild/RPMS/x86_64/lxc-libs-{{ lxc_version }}-1.el6.x86_64.rpm
-  when: result.stdout != '0' and lxc_version == '0.9.0' #TODO: correct comparison
+  when: lxc_version in ['0.8.0', '0.9.0'] and result.stdout != '0'
 
 - name: check lxc is installed
   shell: rpm -q lxc > /dev/null; echo $?
@@ -74,12 +90,12 @@
 - name: install lxc
   command: |
     rpm -i /root/rpmbuild/RPMS/x86_64/lxc-{{ lxc_version }}-1.el6.x86_64.rpm
-  when: result.stdout != '0' and lxc_version == '0.9.0' #TODO: correct comparison
+  when: lxc_version in ['0.8.0', '0.9.0'] and result.stdout != '0'
 
 - name: install lxc
   command: |
     rpm -i /root/rpmbuild/RPMS/x86_64/lxc-{{ lxc_version }}-1.x86_64.rpm
-  when: result.stdout != '0' and lxc_version == '0.7.5' #TODO: correct comparison
+  when: lxc_version == '0.7.5' and result.stdout != '0'
 
 - name: centos container definition for lxc
   template: >
@@ -88,7 +104,7 @@
     owner=root
     group=root
     mode=0755
-  when: lxc_version == '0.9.0' #TODO: correct comparison
+  when: lxc_version in ['0.8.0', '0.9.0']
 
 - name: centos container definition for lxc
   template: >
@@ -97,7 +113,7 @@
     owner=root
     group=root
     mode=0755
-  when: lxc_version == '0.7.5' #TODO: correct comparison
+  when: lxc_version == '0.7.5'
 
 - name: lxc default config directory
   file: >
@@ -155,7 +171,6 @@
     owner=root
     group=root
     mode=0755
-  when: lxc_version == '0.7.5' #TODO: correct comparison
 
 - name: lxc run directory
   file: >
@@ -227,3 +242,14 @@
     dump=0
     passno=0
     state=mounted
+  when: lxc_version in ['0.9.0']
+
+- name: mount cgroup for lxc
+  mount: >
+    src=/lxc
+    name=/cgroup
+    fstype=cgroup
+    dump=0
+    passno=0
+    state=mounted
+  when: lxc_version == '0.7.5' or lxc_version == '0.8.0'
