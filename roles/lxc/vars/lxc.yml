@@ -1,3 +1,13 @@
 lxc_local_domain: internal.example.com
-lxc_version: 0.9.0
-lxc_tarball_sha256sum: 1e1767eae6cc5fbf892c0e193d25da420ba19f2db203716c38f7cdea3b654120
+
+#lxc_version: 0.7.5
+#lxc_tarball_sha256sum: 019ec63f250c874bf7625b1f1bf555b1a6e3a947937a4fca73100abddf829b1c
+
+# This is the recommended version right now.
+lxc_version: 0.8.0
+lxc_tarball_sha256sum: eac833730b94e423d4bef6834bc4a716437d2abd6ab8b24334c506aaaa08692c
+
+# lxc 0.9.0 is not recommended because you cannot shutdown containers with
+# executing the shtudown command on containers. you can do lxc-stop on hosts.
+#lxc_version: 0.9.0
+#lxc_tarball_sha256sum: 1e1767eae6cc5fbf892c0e193d25da420ba19f2db203716c38f7cdea3b654120
