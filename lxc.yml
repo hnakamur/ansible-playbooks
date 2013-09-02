@@ -11,10 +11,12 @@
   vars_files:
     - roles/lxc/vars/lxc.yml
   tasks:
+    - include: roles/common/tasks/hostname.yml
     - include: roles/lxc/tasks/centos_lxc.yml
 
 - hosts: Ubuntu
   gather_facts: false
   sudo: yes
   tasks:
+    - include: roles/common/tasks/hostname.yml
     - include: roles/lxc/tasks/ubuntu_lxc.yml
