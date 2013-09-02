@@ -3,13 +3,14 @@
   rpm_key: >
     state=present
     key=http://nginx.org/keys/nginx_signing.key
-- name: check nginx repo is installed
-  shell: rpm -q nginx-release-centos > /dev/null; echo $?
-  register: result
-  changed_when: false
+- name: downlaod nginx repo rpm
+  get_url: >
+    url=http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+    dest=/usr/local/src/nginx-release-centos-6-0.el6.ngx.noarch.rpm
 - name: install nginx repo
-  command: rpm -i http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
-  when: result.stdout != '0'
+  yum: >
+    name=/usr/local/src/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+    state=present
 - name: install nginx
   yum: pkg=nginx state=installed
 - name: nginx main config file
