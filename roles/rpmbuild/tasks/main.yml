@@ -1,0 +1,42 @@
+---
+
+- name: create os group for rpmbuild
+  group: name={{ rpmbuild_group_name }} gid={{ rpmbuild_group_gid }} state=present
+
+- name: create os user for rpmbuild
+  user: >
+    name={{ rpmbuild_user_name }}
+    uid={{ rpmbuild_user_uid }}
+    group={{ rpmbuild_group_name }}
+    state=present
+
+- name: install 'Development tools'
+  script: yum_groupinstall.sh "'Development tools'"
+  register: result
+  changed_when: result.stdout != ""
+
+- name: install yum-utils
+  yum: name=yum-utils state=present
+
+- name: create directories for rpmbuild
+  file: >
+    path=~{{ rpmbuild_user_name }}/{{ item }}
+    state=directory
+    owner={{ rpmbuild_user_name }}
+    group={{ rpmbuild_user_name }}
+    mode=0755
+  with_items:
+    - rpmbuild
+    - rpmbuild/BUILD
+    - rpmbuild/RPMS
+    - rpmbuild/SOURCES
+    - rpmbuild/SPECS
+    - rpmbuild/SRPMS
+
+- name: put rpmmacros file
+  template: >
+    dest=~{{ rpmbuild_user_name }}/.rpmmacros
+    src=rpmmacros.j2
+    owner={{ rpmbuild_user_name }}
+    group={{ rpmbuild_user_name }}
+    mode=0644

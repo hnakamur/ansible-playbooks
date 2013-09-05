@@ -1,0 +1,4 @@
+rpmbuild_group_name: build
+rpmbuild_group_gid: 60002
+rpmbuild_user_name: build
+rpmbuild_user_uid: 60002
