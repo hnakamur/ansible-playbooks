@@ -1,0 +1,16 @@
+---
+
+- name: ensure mysql service started
+  service: name=mysql state=started enabled=yes
+
+- name: get build account home directory
+  shell: echo -n ~{{ rpmbuild_user_name }}
+  register: result
+  changed_when: False
+
+- name: install mysql-mroonga rpm
+  yum: >
+    name={{ result.stdout }}/rpmbuild/RPMS/x86_64/mysql56-mroonga-{{ mysql_mroonga_srpm_version }}.el6.x86_64.rpm
+    state=present
+  # Note: cannot use name=~{{ rpmbuild_user_name }}/rpmbuild/RPMS/x86_64/mysql56-mroonga-3.07-1.el6.x86_64.rpm because it leads to the following error.
+  #msg: No Package file matching '~build/rpmbuild/RPMS/x86_64/mysql56-mroonga-3.07-1.el6.x86_64.rpm' found on system

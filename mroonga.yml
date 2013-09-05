@@ -1,0 +1,8 @@
+- hosts: mroonga
+  sudo: True
+  roles:
+    - epel
+    - rpmbuild
+    - mroonga/repository
+    - mroonga/build_rpm
+    - mroonga/install_rpm

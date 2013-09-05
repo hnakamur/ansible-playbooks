@@ -1,0 +1,19 @@
+---
+
+- name: install dependent packages to build mroonga
+  yum: >
+    name={{ item }}
+    state=present
+  with_items:
+    - groonga-libs
+    - groonga-devel
+    - groonga-normalizer-mysql
+    - groonga-normalizer-mysql-devel
+    - gperf
+    - ncurses-devel
+    - time
+    - zlib-devel
+
+#- name: download mysql-mroonga srpm
+#  command: >
+#    yumdownloader --source mysql-mroonga

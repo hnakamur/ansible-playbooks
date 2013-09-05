@@ -1,0 +1,7 @@
+---
+
+- name: install mroonga repository
+  yum: >
+    name=http://packages.groonga.org/centos/groonga-release-1.1.0-1.noarch.rpm
+    state=installed
+

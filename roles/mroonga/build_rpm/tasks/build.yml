@@ -1,0 +1,30 @@
+---
+
+- name: install source rpm
+  sudo_user: "{{ rpmbuild_user_name }}"
+  command: >
+    creates=~{{ rpmbuild_user_name }}/rpmbuild/SPECS/mysql-mroonga.spec
+    rpm -i http://packages.groonga.org/centos/6/source/SRPMS/mysql-mroonga-{{ mysql_mroonga_srpm_version }}.el6.src.rpm
+
+- name: put patch file to mroonga spec
+  sudo_user: "{{ rpmbuild_user_name }}"
+  copy: >
+    dest=~{{ rpmbuild_user_name }}/rpmbuild/SPECS/mysql56-mroonga.spec.patch
+    src=mysql56-mroonga.spec.patch
+
+- name: patch mroonga spec file
+  sudo_user: "{{ rpmbuild_user_name }}"
+  shell: >
+    creates=~{{ rpmbuild_user_name }}/rpmbuild/SPECS/mysql56-mroonga.spec
+    chdir=~{{ rpmbuild_user_name }}/rpmbuild/SPECS
+    patch -o mysql56-mroonga.spec < mysql56-mroonga.spec.patch
+
+- name: install wget
+  yum: name=wget state=present
+
+- name: build mroonga rpm
+  sudo_user: "{{ rpmbuild_user_name }}"
+  command: >
+    creates=~{{ rpmbuild_user_name }}/rpmbuild/RPMS/x86_64/mysql56-mroonga-{{ mysql_mroonga_srpm_version }}.el6.x86_64.rpm
+    chdir=~{{ rpmbuild_user_name }}/rpmbuild
+    rpmbuild -ba SPECS/mysql56-mroonga.spec
