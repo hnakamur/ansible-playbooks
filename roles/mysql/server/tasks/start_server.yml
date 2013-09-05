@@ -8,6 +8,7 @@
     owner=mysql
     group=mysql
     mode=0644
+  notify: restart mysql
 
 - name: mysql run directory
   file: >
