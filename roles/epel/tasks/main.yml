@@ -1,0 +1,12 @@
+---
+
+- name: install epel repository
+  yum: >
+    name=http://ftp.riken.jp/Linux/fedora/epel/6/i386/epel-release-6-8.noarch.rpm
+    state=present
+
+- name: install epel key
+  command: rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
+  #rpm_key: >
+  #  key=/etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
+  #  state=present
