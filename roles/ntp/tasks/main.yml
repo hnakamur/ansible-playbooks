@@ -1,0 +1,23 @@
+---
+- name: install ntp
+  yum: pkg=ntp state=installed
+
+- name: check ntpd service is stopped
+  shell: "service ntpd status | grep -q stopped; echo $?"
+  register: result
+
+- name: ntpdate
+  command: ntpdate {{ ntp_servers.0 }}
+  when: result.stdout == "0"
+
+- name: ntp config file
+  template: >
+    src=ntp.conf.j2
+    dest=/etc/ntp.conf
+    owner=root
+    group=root
+    mode=0644
+  notify: restart ntpd
+
+- name: start ntpd service
+  service: name=ntpd state=started enabled=yes
