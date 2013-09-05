@@ -1,0 +1,7 @@
+---
+
+- name: install xbuild
+  git: >
+    repo={{ xbuild_repo }}
+    dest={{ xbuild_install_dir_prefix }}/xbuild
+    update={{ xbuild_update }}

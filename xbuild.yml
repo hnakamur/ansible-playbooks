@@ -1,0 +1,10 @@
+---
+- hosts: xbuild
+  sudo: True
+  roles:
+  - xbuild
+  - xbuild/php
+  - xbuild/perl
+  - xbuild/ruby
+  - xbuild/php
+  - xbuild/php

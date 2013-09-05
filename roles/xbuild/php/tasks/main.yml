@@ -1,3 +1,5 @@
+---
+
 - name: install dependent packages to build php
   yum: name={{ item }}
   with_items:
@@ -23,14 +25,16 @@
     - oniguruma-devel
     - net-snmp-devel
     - bzip2-devel
+
 - name: install php
   command: >
-    /usr/local/src/xbuild/php-install {{ xbuild_php_version }}
+    {{ xbuild_install_dir_prefix }}/xbuild/php-install {{ xbuild_php_version }}
     {{ xbuild_install_dir_prefix }}/php-{{ xbuild_php_version }}
     creates={{ xbuild_install_dir_prefix }}/php-{{ xbuild_php_version }}
+
 - name: update php.ini
   template: >
-    src=roles/common/templates/xbuild-php.ini.j2
+    src=php.ini.j2
     dest={{ xbuild_install_dir_prefix}}/php-{{ xbuild_php_version }}/etc/php.ini
     owner=root
     group=root

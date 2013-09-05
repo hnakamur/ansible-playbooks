@@ -1,8 +1,8 @@
-- name: install dependent packages for building node.js
-  yum: name=gcc state=present
+---
+
 - name: build and install node.js
   command: >
-    /usr/local/src/xbuild/node-install {{ xbuild_node_version }}
+    {{ xbuild_install_dir_prefix }}/xbuild/node-install {{ xbuild_node_version }}
     {{ xbuild_install_dir_prefix }}/node-{{ xbuild_node_version }}
     creates={{ xbuild_install_dir_prefix }}/node-{{ xbuild_node_version }}
 

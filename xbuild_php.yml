@@ -1,0 +1,12 @@
+- hosts: xbuild_php
+  sudo: True
+  roles:
+    - set_hostname
+    - timezone
+    - epel
+    - sysstat
+    - ntp
+    - devtools
+    - git
+    - xbuild
+    - xbuild/php

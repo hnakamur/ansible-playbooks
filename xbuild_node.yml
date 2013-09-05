@@ -1,0 +1,12 @@
+- hosts: xbuild_node
+  sudo: True
+  roles:
+    - set_hostname
+    - timezone
+    - epel
+    - sysstat
+    - ntp
+    - devtools
+    - git
+    - xbuild
+    - xbuild/node
