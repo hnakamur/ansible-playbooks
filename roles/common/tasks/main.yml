@@ -1,6 +1,5 @@
 - include: hostname.yml
 - include: timezone.yml
-- include: epel.yml
 - include: ntp.yml
 - include: sysstat.yml
 - include: self_signed_certificate.yml

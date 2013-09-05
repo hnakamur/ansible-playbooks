@@ -1,9 +1,0 @@
-- name: check epel repository installed
-  shell: rpm -q epel-release > /dev/null; echo $?
-  register: result
-- name: install epel repository
-  shell: |
-    rpm -i http://ftp.riken.jp/Linux/fedora/epel/6/i386/epel-release-6-8.noarch.rpm &&
-    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6 &&
-    yum clean metadata
-  when: result.stdout != "0"
