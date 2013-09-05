@@ -1,16 +1,27 @@
+- name: create private key for host
+  shell: |
+    creates=/etc/pki/tls/private/{{ ansible_fqdn }}.key
+    umask 0277 &&
+    openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 \
+      -out /etc/pki/tls/private/{{ ansible_fqdn }}.key
+
 - name: self signed certificate
   shell: |
-    hostname=`hostname` &&
-    crt_file="/etc/pki/tls/certs/${hostname}.crt" &&
-    key_file="/etc/pki/tls/private/${hostname}.key" &&
-    crt_and_key_file="/etc/pki/tls/private/${hostname}.crt_and_key" &&
-    subject="{{ self_signed_certificate_subject_prefix }}/CN=${hostname}" &&
-    openssl req -new -newkey rsa:2048 -sha1 -x509 -nodes \
+    creates=/etc/pki/tls/certs/{{ ansible_fqdn }}.crt
+    openssl req -new -key /etc/pki/tls/private/{{ ansible_fqdn }}.key \
+      -subj "{{ self_signed_certificate_subject_prefix }}/CN={{ ansible_fqdn }}" \
+      -out /etc/pki/tls/certs/{{ ansible_fqdn }}.csr &&
+    openssl x509 -req -in /etc/pki/tls/certs/{{ ansible_fqdn }}.csr \
+      -signkey /etc/pki/tls/private/{{ ansible_fqdn }}.key \
       -set_serial {{ self_signed_certificate_serial }} \
       -days {{ self_signed_certificate_days }} \
-      -subj "$subject" \
-      -out "$crt_file" \
-      -keyout "$key_file" &&
-    cat "$crt_file" "$key_file" >> "$crt_and_key_file" &&
-    chmod 400 "$key_file" "$crt_and_key_file"
-    creates="/etc/pki/tls/certs/{{ ansible_fqdn }}.crt"
+      -out /etc/pki/tls/certs/{{ ansible_fqdn }}.crt &&
+    rm /etc/pki/tls/certs/{{ ansible_fqdn }}.csr
+
+- name: self signed certificate followed by key
+  shell: |
+    creates=/etc/pki/tls/private/{{ ansible_fqdn }}.crt_and_key
+    umask 0277 &&
+    cat /etc/pki/tls/certs/{{ ansible_fqdn }}.crt \
+        /etc/pki/tls/private/{{ ansible_fqdn }}.key > \
+        /etc/pki/tls/private/{{ ansible_fqdn }}.crt_and_key
