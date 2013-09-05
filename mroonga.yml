@@ -1,7 +1,14 @@
 - hosts: mroonga
   sudo: True
   roles:
+    - set_hostname
     - epel
+    - sysstat
+    - ntp
+    - cron
+    - { role: mysql/rpm, mysql_rpm_server_needed: true }
+    - mysql/server
+    - mysql/backup
     - rpmbuild
     - mroonga/repository
     - mroonga/build_rpm
