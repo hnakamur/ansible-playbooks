@@ -1,0 +1,5 @@
+# Please do not put slash at the end.
+self_signed_certificate_subject_prefix: "/C=JP/ST=Osaka/L=Osaka City"
+
+self_signed_certificate_serial: 0
+self_signed_certificate_days: 365

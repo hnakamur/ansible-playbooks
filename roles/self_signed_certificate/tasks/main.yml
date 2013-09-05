@@ -3,10 +3,10 @@
     crt_file="/etc/pki/tls/certs/{{ inventory_hostname }}.crt" &&
     key_file="/etc/pki/tls/private/{{ inventory_hostname }}.key" &&
     crt_and_key_file="/etc/pki/tls/private/{{ inventory_hostname }}.crt_and_key" &&
-    subject="/C=JP/ST=Osaka/L=Osaka City/CN={{ inventory_hostname }}" &&
+    subject="{{ self_signed_certificate_subject_prefix }}/CN={{ inventory_hostname }}" &&
     openssl req -new -newkey rsa:2048 -sha1 -x509 -nodes \
-      -set_serial 1 \
-      -days 365 \
+      -set_serial {{ self_signed_certificate_serial }} \
+      -days {{ self_signed_certificate_days }} \
       -subj "$subject" \
       -out "$crt_file" \
       -keyout "$key_file" &&
