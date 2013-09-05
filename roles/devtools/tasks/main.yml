@@ -1,0 +1,6 @@
+---
+
+- name: install 'Development tools'
+  script: yum_groupinstall.sh "'Development tools'"
+  register: result
+  changed_when: result.stdout != ""
