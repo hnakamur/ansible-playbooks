@@ -1,0 +1,28 @@
+# {{ ansible_managed }}
+
+[mysqld]
+character-set-server=utf8
+datadir=/var/lib/mysql 
+socket=/var/lib/mysql/mysql.sock
+user=mysql
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+
+# enable bin log
+log-bin=mysqld-bin
+expire_logs_days={{ expire_logs_days }}
+  
+# enable slow query log
+slow-query-log=1
+long_query_time={{ long_query_time }}
+slow-query-log-file=/var/log/mysql-slow.log
+  
+# This duplicated config is needed for /etc/init.d/mysql provided by Oracle.
+pid-file=/var/run/mysqld/mysqld.pid
+  
+[mysqld_safe]
+log-error=/var/log/mysqld.log
+pid-file=/var/run/mysqld/mysqld.pid
+
+[mysql]
+default-character-set=utf8

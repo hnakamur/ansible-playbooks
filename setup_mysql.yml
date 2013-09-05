@@ -1,0 +1,14 @@
+---
+- hosts: mysql_servers
+  sudo: True
+  roles:
+  - { role: set_hostname }
+  - { role: mysql/rpm, mysql_rpm_server_needed: true }
+  - { role: mysql/server }
+  - { role: mysql/backup }
+
+- hosts: mysql_clients
+  sudo: True
+  roles:
+  - { role: set_hostname }
+  - { role: mysql/rpm }

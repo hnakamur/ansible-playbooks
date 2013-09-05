@@ -1,0 +1,26 @@
+---
+# The playbook for mysql/server secure_installation tasks
+
+- name: save password for mysql root
+  template: >
+    dest=~root/.my.cnf
+    src=root.my.cnf.j2
+    owner=root
+    group=root
+    mode=0600
+
+- name: check mysql initial password file exists.
+  stat: path=/root/.mysql_secret
+  register: st
+  changed_when: False
+
+- name: set mysql root password.
+  script: set_root_password.sh
+  when: st.stat.isreg is defined and st.stat.isreg == true
+
+- name: secure mysql installation
+  script: mysql_secure_installation.sh
+  when: st.stat.isreg is defined and st.stat.isreg == true
+
+- name: delete mysql initial password file.
+  file: path=/root/.mysql_secret state=absent

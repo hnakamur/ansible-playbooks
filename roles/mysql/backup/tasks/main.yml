@@ -1,0 +1,78 @@
+---
+# The playbook for mysql/server setup_backup tasks
+
+- name: create os group for backup mysql
+  group: name={{ mysql_backup_os_group_name }} gid={{ mysql_backup_os_group_gid }} state=present
+
+- name: create os user for backup mysql
+  user: >
+    name={{ mysql_backup_os_user_name }}
+    uid={{ mysql_backup_os_user_uid }}
+    group={{ mysql_backup_os_group_name }}
+    state=present
+
+- name: mysql backup bin directory
+  file: >
+    path=~{{ mysql_backup_os_user_name }}/bin
+    state=directory
+    owner={{ mysql_backup_os_user_name }}
+    group={{ mysql_backup_os_user_name }}
+    mode=0755
+
+- name: save password for mysql backup
+  template: >
+    dest=~{{ mysql_backup_os_user_name }}/.my.cnf
+    src=mysqlbackup.my.cnf.j2
+    owner={{ mysql_backup_os_user_name }}
+    group={{ mysql_backup_os_user_name }}
+    mode=0600
+
+- name: check mysql backup user exists.
+  shell: |
+    echo "SELECT host, user FROM mysql.user WHERE user = '{{ mysql_backup_user_id }}';" |
+    mysql -uroot
+  register: result
+  changed_when: False
+
+- name: create mysql backup user.
+  shell: |
+    echo "GRANT LOCK TABLES, SELECT, RELOAD ON *.* TO '{{ mysql_backup_user_id }}'@'localhost' IDENTIFIED BY '{{ mysql_backup_user_password }}';" |
+    mysql -uroot
+  when: result.stdout == ""
+
+- name: mysql backup script file
+  template: >
+    dest=~{{ mysql_backup_os_user_name }}/bin/backup_mysql_db.sh
+    src=backup_mysql_db.sh.j2
+    owner=root
+    group=root
+    mode=0755
+
+- name: mysql backup log directory
+  file: >
+    path={{ log_base_dir }}
+    state=directory
+    owner={{ mysql_backup_os_user_name }}
+    group={{ mysql_backup_os_user_name }}
+    mode=0700
+
+- name: mysql backup data directory
+  file: >
+    path={{ dump_base_dir }}
+    state=directory
+    owner={{ mysql_backup_os_user_name }}
+    group={{ mysql_backup_os_user_name }}
+    mode=0700
+
+- name: mysql backup cron config
+  cron: >
+    name="backup mysql"
+    cron_file=backup_mysql
+    user={{ mysql_backup_os_user_name }}
+    hour={{ mysql_backup_hour }}
+    minute={{ mysql_backup_minute }}
+    job="~{{ mysql_backup_os_user_name }}/bin/backup_mysql_db.sh --all-databases"
+    state=present
+
+- name: ensure cron service started
+  service: name=crond state=started enabled=yes

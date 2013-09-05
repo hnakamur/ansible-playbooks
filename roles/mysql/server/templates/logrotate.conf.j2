@@ -1,0 +1,18 @@
+# {{ ansible_managed }}
+
+/var/log/mysqld.log /var/log/mysql-slow.log {
+    # create 600 mysql mysql
+    daily
+    missingok
+    rotate 90
+    compress
+    delaycompress
+    notifempty
+    dateext
+    olddir /var/log/old/mysqld/
+    postrotate
+        if mysqladmin -uroot ping &>/dev/null; then
+            mysqladmin -uroot flush-logs
+        fi
+    endscript
+}

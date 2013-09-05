@@ -1,0 +1,13 @@
+error_mail_recipient: _YOUR_ADDRESS_HERE_@example.com
+log_base_dir: /var/log/mysql_backup
+dump_base_dir: /data/mysql_backup
+mysql_backup_hour: 3
+mysql_backup_minute: 20
+
+mysql_backup_os_group_name: backup
+mysql_backup_os_group_gid: 60001
+mysql_backup_os_user_name: backup
+mysql_backup_os_user_uid: 60001
+
+mysql_backup_user_id: backup
+mysql_backup_user_password: z433We9sQGVKt9cV

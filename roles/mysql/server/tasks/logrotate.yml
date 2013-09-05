@@ -1,0 +1,18 @@
+---
+# The playbook for mysql/server logrotate tasks
+
+- name: mysql old log directory
+  file: >
+    path=/var/log/old/mysqld
+    state=directory
+    owner=mysql
+    group=mysql
+    mode=0755
+
+- name: mysql logrotate config
+  template: >
+    src=logrotate.conf.j2
+    dest=/etc/logrotate.d/mysqld
+    owner=root
+    group=root
+    mode=0644

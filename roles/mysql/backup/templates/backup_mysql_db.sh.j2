@@ -1,0 +1,66 @@
+#!/bin/bash
+
+error_mail_recipient={{ error_mail_recipient }}
+log_base_dir={{ log_base_dir }}
+dump_base_dir={{ dump_base_dir }}
+backup_user={{ mysql_backup_user_id }}
+host=`hostname`
+
+mydate() {
+  date "+%Y-%m-%dT%H:%M:%S"
+}
+
+mymkdir() {
+  dir=$1
+  if [ ! -d $dir ]; then
+    mkdir -p $dir
+  fi
+}
+
+backup_db() {
+  database=$1
+  now=`date +%Y%m%d-%H%M%S`
+  log=$log_base_dir/${database}/${database}_db_backup-$now.log
+  dumpfile=$dump_base_dir/${database}/${database}-$now.sql.gz
+
+  mymkdir `dirname $log`
+  mymkdir `dirname $dumpfile`
+
+  echo "`mydate` backup_mysql_db ${database} start" >> $log
+
+  (mysqldump --opt --single-transaction --flush-logs -u${backup_user} ${database} | gzip > $dumpfile) 2>> $log
+  ret=$?
+    
+  echo "`mydate` backup_mysql_db ${database} end ret=$ret" >> $log
+  if [ $ret -ne 0 ]; then
+    mail -s "$host MySQL $database backup ERROR" $error_mail_recipient <<EOF
+$host MySQL $database backup failed.
+database: $database
+mysqldump return code: $ret
+logfile: $log
+log contents:
+`cat $log`
+EOF
+  fi
+}
+
+if [ $# -eq 0 ]; then
+  echo "Usage: $0 db_name1 [db_name2 ...]"
+  exit 1
+fi
+
+if [ $1 = '--all-databases' ]; then
+  cat_sql() {
+    cat <<EOF
+select schema_name from information_schema.schemata
+where schema_name not in ('information_schema', 'mysql', 'performance_schema');
+EOF
+  }
+  databases=`cat_sql | mysql -u${backup_user} --skip-column-names`
+else
+  databases="$@"
+fi
+
+for database in $databases; do
+  backup_db $database
+done

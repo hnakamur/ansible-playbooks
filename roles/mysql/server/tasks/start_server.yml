@@ -1,0 +1,33 @@
+---
+# The playbook for mysql/server start_server tasks
+
+- name: setup my.cnf
+  template: >
+    src=my.cnf.j2
+    dest=/etc/my.cnf
+    owner=mysql
+    group=mysql
+    mode=0644
+
+- name: mysql run directory
+  file: >
+    path=/var/run/mysqld
+    state=directory
+    owner=mysql
+    group=mysql
+    mode=0755
+
+- name: mysql slow query log
+  copy: >
+    force=no
+    content=""
+    dest=/var/log/mysql-slow.log
+    owner=mysql
+    group=mysql
+    mode=0644
+
+- name: initialize mysql database
+  command: creates=/var/lib/mysql/auto.cnf mysql_install_db
+
+- name: start mysql service
+  service: name=mysql state=started enabled=yes

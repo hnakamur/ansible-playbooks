@@ -1,0 +1,30 @@
+---
+# The playbook for mysql/rpm tasks
+
+- name: make download directory
+  file: path={{ mysql_download_dest_dir }} state=directory
+
+- name: download mysql common rpms
+  get_url: >
+    url={{ mysql_download_base_url }}/{{ item.filename }}
+    dest={{ mysql_download_dest_dir }}
+    sha256sum={{ item.sha256sum }}
+  with_items: "{{ mysql_common_rpms }}"
+
+- name: install mysql common rpms
+  yum: name="{{ mysql_download_dest_dir }}/{{ item.filename }}" state=present
+  with_items: "{{ mysql_common_rpms }}"
+
+
+- name: download mysql server only rpms
+  get_url: >
+    url={{ mysql_download_base_url }}/{{ item.filename }}
+    dest={{ mysql_download_dest_dir }}
+    sha256sum={{ item.sha256sum }}
+  with_items: "{{ mysql_server_rpms }}"
+  when: mysql_rpm_server_needed
+
+- name: install mysql server only rpms
+  yum: name="{{ mysql_download_dest_dir }}/{{ item.filename }}" state=present
+  with_items: "{{ mysql_server_rpms }}"
+  when: mysql_rpm_server_needed
