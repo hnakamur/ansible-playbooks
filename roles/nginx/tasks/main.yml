@@ -1,36 +1,37 @@
+---
 # ansible playbook for installing nginx
+
 - name: import nginx repo key
   rpm_key: >
-    state=present
     key=http://nginx.org/keys/nginx_signing.key
-- name: downlaod nginx repo rpm
-  get_url: >
-    url=http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
-    dest=/usr/local/src/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+    state=present
+
 - name: install nginx repo
   yum: >
-    name=/usr/local/src/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+    name=http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
     state=present
+
 - name: install nginx
-  yum: pkg=nginx state=installed
+  yum: name=nginx state=present
+
 - name: nginx main config file
   template: >
-    src=roles/common/templates/nginx.conf.j2
+    src=nginx.conf.j2
     dest=/etc/nginx/nginx.conf
     owner=root
     group=root
     mode=0644
-  notify:
-    - reload nginx
+  notify: reload nginx
+
 - name: nginx http config file
   template: >
-    src=roles/common/templates/nginx.default.conf.j2
+    src=nginx.default.conf.j2
     dest=/etc/nginx/conf.d/default.conf
     owner=root
     group=root
     mode=0644
-  notify:
-    - reload nginx
+  notify: reload nginx
+
 - name: nginx http location config file directory
   file: >
     path=/etc/nginx/conf.d/location.d
@@ -38,15 +39,16 @@
     owner=root
     group=root
     mode=0755
+
 - name: nginx https config file
   template: >
-    src=roles/common/templates/nginx.ssl.conf.j2
+    src=ssl.conf.j2
     dest=/etc/nginx/conf.d/ssl.conf
     owner=root
     group=root
     mode=0644
-  notify:
-    - reload nginx
+  notify: reload nginx
+
 - name: nginx https location config file directory
   file: >
     path=/etc/nginx/conf.d/ssl.location.d
@@ -54,5 +56,6 @@
     owner=root
     group=root
     mode=0755
+
 - name: start nginx service
   service: name=nginx state=started enabled=yes

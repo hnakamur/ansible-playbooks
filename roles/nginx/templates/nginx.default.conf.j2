@@ -2,7 +2,7 @@
 # {{ ansible_managed }}
 server {
     listen       80;
-    server_name  {{ inventory_hostname }};
+    server_name  {{ ansible_fqdn }};
 
     #charset koi8-r;
     #access_log  /var/log/nginx/log/host.access.log  main;
