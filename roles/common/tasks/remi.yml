@@ -1,6 +1,0 @@
-- name: check remi repo is installed
-  shell: rpm -q remi-release > /dev/null; echo $?
-  register: result
-- name: install remi repo
-  command: rpm -i http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
-  when: result.stdout != '0'
