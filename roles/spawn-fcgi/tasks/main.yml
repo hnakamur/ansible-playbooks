@@ -1,0 +1,16 @@
+---
+
+- name: install spawn-fcgi
+  yum: name=spawn-fcgi state=present
+
+- name: spawn-cfgi sysconfig file
+  template: >
+    src=spawn-fcgi.sysconfig.j2
+    dest=/etc/sysconfig/spawn-fcgi
+    owner=root
+    group=root
+    mode=0644
+  notify: reload spawn-fcgi
+
+- name: start spawn-fcgi service
+  service: name=spawn-fcgi state=started enabled=yes

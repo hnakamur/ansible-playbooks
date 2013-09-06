@@ -12,7 +12,6 @@
     - nagios-plugins-ssh
     - nagios-plugins-swap
     - nagios-plugins-load
-    - spawn-fcgi
 - name: put nginx user to nagios group.
   user: name=nginx groups=nagios append=yes
 - name: change group of nagios passwd file for nginx
@@ -32,11 +31,5 @@
   template: src=roles/common/templates/nagios.nginx.ssl.conf.j2 dest=/etc/nginx/conf.d/ssl.location.d/nagios.conf owner=root group=root mode=0644
   notify:
     - reload nginx
-- name: spawn-cfgi sysconfig file for nginx
-  template: src=roles/common/templates/nagios.spawn-fcgi.sysconfig.j2 dest=/etc/sysconfig/spawn-fcgi owner=root group=root mode=0644
-  notify:
-    - reload spawn-fcgi
-- name: start spawn-fcgi service for nagios
-  service: name=spawn-fcgi state=started enabled=yes
 - name: start nagios service
   service: name=nagios state=started enabled=yes
