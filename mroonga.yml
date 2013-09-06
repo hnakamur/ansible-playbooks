@@ -9,6 +9,7 @@
     - { role: mysql/rpm, mysql_rpm_server_needed: true }
     - mysql/server
     - mysql/backup
+    - devtools
     - rpmbuild
     - mroonga/repository
     - mroonga/build_rpm

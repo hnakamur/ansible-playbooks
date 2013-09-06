@@ -10,14 +10,6 @@
     group={{ rpmbuild_group_name }}
     state=present
 
-- name: install 'Development tools'
-  script: yum_groupinstall.sh "'Development tools'"
-  register: result
-  changed_when: result.stdout != ""
-
-- name: install yum-utils
-  yum: name=yum-utils state=present
-
 - name: create directories for rpmbuild
   file: >
     path=~{{ rpmbuild_user_name }}/{{ item }}
