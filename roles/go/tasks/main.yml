@@ -1,15 +1,19 @@
+---
+
 - name: download go
   get_url: >
     url=https://go.googlecode.com/files/go{{ go_version }}.linux-amd64.tar.gz
     dest=/usr/local/src/go{{ go_version }}.linux-amd64.tar.gz
     sha256sum={{ go_tarball_sha256sum }}
+
 - name: install go
   command: >
     creates=/usr/local/go
     tar xf /usr/local/src/go{{ go_version }}.linux-amd64.tar.gz -C /usr/local
+
 - name: set system-wide PATH environment variable for go
   template: >
-    src=roles/common/templates/go.profile.d.sh.j2
+    src=go.profile.d.sh.j2
     dest=/etc/profile.d/go.sh
     owner=root
     group=root
