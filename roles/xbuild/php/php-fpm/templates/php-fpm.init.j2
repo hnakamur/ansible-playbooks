@@ -4,6 +4,7 @@
 # description:	PHP FastCGI Process Manager
 # processname: php-fpm
 # config: {{ xbuild_install_dir_prefix }}/php-{{ xbuild_php_version }}/etc/php-fpm.conf
+# config: {{ xbuild_install_dir_prefix }}/php-{{ xbuild_php_version }}/etc/php.ini
 # pidfile: {{ xbuild_install_dir_prefix }}/php-{{ xbuild_php_version }}/var/run/php-fpm/php-fpm.pid
 #
 # {{ ansible_managed }}
@@ -29,7 +30,6 @@ fi
 
 RETVAL=0
 prog="php-fpm"
-conf="{{ xbuild_install_dir_prefix }}/php-{{ xbuild_php_version }}/etc/php-fpm.conf"
 pidfile=${PIDFILE-{{ xbuild_install_dir_prefix }}/php-{{ xbuild_php_version }}/var/run/php-fpm.pid}
 lockfile=${LOCKFILE-/var/lock/subsys/php-fpm}
 
@@ -37,7 +37,8 @@ start () {
 	echo -n $"Starting $prog: "
 	dir=$(dirname ${pidfile})
 	[ -d $dir ] || mkdir $dir
-	daemon --pidfile ${pidfile} {{ xbuild_install_dir_prefix }}/php-{{ xbuild_php_version }}/sbin/php-fpm -c $conf --daemonize
+	#daemon --pidfile ${pidfile} {{ xbuild_install_dir_prefix }}/php-{{ xbuild_php_version }}/sbin/php-fpm -c $conf --daemonize
+	daemon --pidfile ${pidfile} {{ xbuild_install_dir_prefix }}/php-{{ xbuild_php_version }}/sbin/php-fpm --daemonize
 	RETVAL=$?
 	echo
 	[ $RETVAL -eq 0 ] && touch ${lockfile}
