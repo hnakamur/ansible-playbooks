@@ -1,0 +1,132 @@
+---
+
+- name: create nagios group
+  group: name=nagios
+
+- name: create nagios user
+  user: name=nagios group=nagios
+
+- name: download nagios core source
+  get_url: >
+    url=http://jaist.dl.sourceforge.net/project/nagios/nagios-3.x/nagios-{{ nagios_core_version }}/nagios-{{ nagios_core_version }}.tar.gz
+    dest=/usr/local/src/nagios-{{ nagios_core_version }}.tar.gz
+
+- name: extract nagios core source
+  command: >
+    chdir=/usr/local/src
+    creates=/usr/local/src/nagios
+    tar xf /usr/local/src/nagios-{{ nagios_core_version }}.tar.gz
+
+- name: configure nagios core
+  command: >
+    creates=/usr/local/src/nagios/config.status
+    chdir=/usr/local/src/nagios
+    ./configure
+
+- name: build nagios core
+  command: >
+    creates=/usr/local/src/nagios/base/nagios
+    chdir=/usr/local/src/nagios
+    make all
+
+- name: install nagios core
+  command: >
+    creates=/usr/local/nagios/bin/nagios
+    chdir=/usr/local/src/nagios
+    make install
+
+- name: install nagios init script
+  command: >
+    creates=/etc/init.d/nagios
+    chdir=/usr/local/src/nagios
+    make install-init
+
+- name: install nagios sample config
+  command: >
+    creates=/usr/local/nagios/etc/nagios.cfg
+    chdir=/usr/local/src/nagios
+    make install-config
+
+- name: nagios config include directory
+  file: >
+    path=/usr/local/nagios/etc/conf.d
+    state=directory
+    owner=nagios
+    group=nagios
+    mode=0755
+
+- name: put nginx user to nagios group.
+  user: name=nginx groups=nagios append=yes
+
+- name: install httpd-tools
+  yum: name=httpd-tools state=present
+
+- name: add a htpasswd user for nagios
+  command: >
+    htpasswd -b -c /usr/local/nagios/etc/passwd {{ nagios_web_userid }} {{ nagios_web_password }}
+  # ansible htpasswd module needs passlib python library on target machine.  
+  #htpasswd: >
+  #  path=/usr/local/nagios/etc/passwd
+  #  name={{ nagios_web_userid }}
+  #  password={{ nagios_web_password }}
+  #  owner=root
+  #  group=nginx
+  #  mode=0640
+
+- name: htpasswd file permission
+  file: >
+    path=/usr/local/nagios/etc/passwd
+    owner=nagios
+    group=nagios
+    mode=0644
+
+- name: add permission on nagios log directory to nginx
+  file: path=/usr/local/var group=nginx state=directory recurse=yes
+
+- name: change group of nagios config.inc.php file for nginx
+  file: path=/usr/local/nagios/share/config.inc.php group=nginx
+
+- name: nagios pid directory
+  file: >
+    path=/usr/local/nagios/var
+    state=directory
+    owner=nagios
+    group=nagios
+    mode=0755
+
+- name: nagios external command directory
+  file: >
+    path=/usr/local/nagios/var/spool/cmd
+    state=directory
+    owner=nagios
+    group=nagios
+    mode=0755
+
+- name: nagios log directory
+  file: >
+    path=/var/log/nagios
+    state=directory
+    owner=nagios
+    group=nagios
+    mode=0755
+
+- name: nagios main config
+  template: >
+    src=nagios.cfg.j2
+    dest=/usr/local/nagios/etc/nagios.cfg
+    owner=nagios
+    group=nagios
+    mode=0644
+  notify: reload nagios
+
+- name: add nginx config for nagios
+  template: >
+    src=nagios.nginx.ssl.conf.j2
+    dest=/etc/nginx/conf.d/ssl.location.d/nagios.conf
+    owner=root
+    group=root
+    mode=0644
+  notify: reload nginx
+
+- name: start nagios service
+  service: name=nagios state=started enabled=yes

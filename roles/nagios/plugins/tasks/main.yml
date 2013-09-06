@@ -1,0 +1,30 @@
+---
+
+- name: download nagios plugins source
+  get_url: >
+    url=http://jaist.dl.sourceforge.net/project/nagiosplug/nagiosplug/{{ nagios_plugins_version }}/nagios-plugins-{{ nagios_plugins_version }}.tar.gz
+    dest=/usr/local/src/nagios-plugins-{{ nagios_plugins_version }}.tar.gz
+
+- name: extract nagios plugins source
+  command: >
+    chdir=/usr/local/src
+    creates=/usr/locla/src/nagios-plugins-{{ nagios_plugins_version }}
+    tar xf /usr/local/src/nagios-plugins-{{ nagios_plugins_version }}.tar.gz
+
+- name: configure nagios plugins
+  command: >
+    creates=/usr/local/src/nagios-plugins-{{ nagios_plugins_version }}/config.status
+    chdir=/usr/local/src/nagios-plugins-{{ nagios_plugins_version }}
+    ./configure
+
+- name: make nagios plugins
+  command: >
+    creates=/usr/local/src/nagios-plugins-{{ nagios_plugins_version }}/plugins/check_http
+    chdir=/usr/local/src/nagios-plugins-{{ nagios_plugins_version }}
+    make
+
+- name: install nagios plugins
+  command: >
+    creates=/usr/local/nagios/libexec/check_http
+    chdir=/usr/local/src/nagios-plugins-{{ nagios_plugins_version }}
+    make install

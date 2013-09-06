@@ -1,4 +1,4 @@
-# /etc/nagios/nagios.cfg
+# /usr/local/nagios/etc/nagios.cfg
 # {{ ansible_managed }}
 ##############################################################################
 #
@@ -29,34 +29,34 @@ log_file=/var/log/nagios/nagios.log
 # if you wish (as shown below), or keep them all in a single config file.
 
 # You can specify individual object config files as shown below:
-cfg_file=/etc/nagios/objects/commands.cfg
-cfg_file=/etc/nagios/objects/contacts.cfg
-cfg_file=/etc/nagios/objects/timeperiods.cfg
-cfg_file=/etc/nagios/objects/templates.cfg
+cfg_file=/usr/local/nagios/etc/objects/commands.cfg
+cfg_file=/usr/local/nagios/etc/objects/contacts.cfg
+cfg_file=/usr/local/nagios/etc/objects/timeperiods.cfg
+cfg_file=/usr/local/nagios/etc/objects/templates.cfg
 
 # Definitions for monitoring the local (Linux) host
-cfg_file=/etc/nagios/objects/localhost.cfg
+cfg_file=/usr/local/nagios/etc/objects/localhost.cfg
 
 # Definitions for monitoring a Windows machine
-#cfg_file=/etc/nagios/objects/windows.cfg
+#cfg_file=/usr/local/nagios/etc/objects/windows.cfg
 
 # Definitions for monitoring a router/switch
-#cfg_file=/etc/nagios/objects/switch.cfg
+#cfg_file=/usr/local/nagios/etc/objects/switch.cfg
 
 # Definitions for monitoring a network printer
-#cfg_file=/etc/nagios/objects/printer.cfg
+#cfg_file=/usr/local/nagios/etc/objects/printer.cfg
 
 
 # You can also tell Nagios to process all config files (with a .cfg
 # extension) in a particular directory by using the cfg_dir
 # directive as shown below:
 
-#cfg_dir=/etc/nagios/servers
-#cfg_dir=/etc/nagios/printers
-#cfg_dir=/etc/nagios/switches
-#cfg_dir=/etc/nagios/routers
+#cfg_dir=/usr/local/nagios/etc/servers
+#cfg_dir=/usr/local/nagios/etc/printers
+#cfg_dir=/usr/local/nagios/etc/switches
+#cfg_dir=/usr/local/nagios/etc/routers
 
-cfg_dir=/etc/nagios/conf.d
+cfg_dir=/usr/local/nagios/etc/conf.d
 
 
 
@@ -97,7 +97,7 @@ precached_object_file=/var/log/nagios/objects.precache
 # defined as macros in this file and restrictive permissions (600)
 # can be placed on this file.
 
-resource_file=/etc/nagios/private/resource.cfg
+resource_file=/usr/local/nagios/etc/resource.cfg
 
 
 
@@ -174,7 +174,7 @@ command_check_interval=-1
 # directory level instead of on the file, as the file is deleted every
 # time its contents are processed.
 
-command_file=/var/spool/nagios/cmd/nagios.cmd
+command_file=/usr/local/nagios/var/spool/cmd/nagios.cmd
 
 
 
@@ -192,7 +192,7 @@ external_command_buffer_slots=4096
 # This is the lockfile that Nagios will use to store its PID number
 # in when it is running in daemon mode.
 
-lock_file=/var/run/nagios.pid
+lock_file=/usr/local/nagios/var/nagios.lock
 
 
 
@@ -466,7 +466,7 @@ max_check_result_reaper_time=30
 # Note: Make sure that only one instance of Nagios has access
 # to this directory!  
 
-check_result_path=/var/log/nagios/spool/checkresults
+check_result_path=/usr/local/nagios/var/spool/checkresults
 
 
 
