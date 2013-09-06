@@ -1,12 +1,23 @@
 ---
 
+- name: check epel repository is installed
+  shell: >
+    rpm -q epel-release > /dev/null; echo $?
+  register: result
+  changed_when: False
+
 - name: install epel repository
   yum: >
     name=http://ftp.riken.jp/Linux/fedora/epel/6/i386/epel-release-6-8.noarch.rpm
     state=present
+  when: result.stdout != "0"
 
 - name: install epel key
   command: rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
+  when: result.stdout != "0"
   #rpm_key: >
   #  key=/etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
   #  state=present
+  #
+  # I got the following error:
+  #NameError: global name 'is_keyid' is not defined
