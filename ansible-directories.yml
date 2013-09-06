@@ -21,4 +21,4 @@
     file: path=roles/{{ item[0] }}/{{ item[1] }} state=directory
     with_nested:
       - roles
-      - [ 'tasks', 'handlers', 'templates', 'files', 'vars' ]
+      - [ 'tasks', 'handlers', 'templates', 'files', 'vars', 'meta' ]
