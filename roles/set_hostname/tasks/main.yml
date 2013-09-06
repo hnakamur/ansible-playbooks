@@ -1,4 +1,4 @@
 ---
 
 - name: set hostname
-  hostname: name={{ inventory_hostname }}.{{ domain_to_set }}
+  hostname: name={{ inventory_hostname }}{{ domain_to_set }}
