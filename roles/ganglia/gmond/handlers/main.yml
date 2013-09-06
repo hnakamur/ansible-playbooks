@@ -1,0 +1,2 @@
+- name: restart gmond
+  service: name=gmond state=restarted

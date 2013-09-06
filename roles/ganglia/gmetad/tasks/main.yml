@@ -1,0 +1,30 @@
+---
+
+- name: ganglia rrds directory
+  file: >
+    path=/var/lib/ganglia/rrds
+    state=directory
+    owner=ganglia
+    group=root
+    mode=0755
+
+- name: gmetad config file
+  template: >
+    src=gmetad.conf.j2
+    dest=/etc/ganglia/gmetad.conf
+    owner=root
+    group=root
+    mode=0644
+  notify: restart gmetad
+
+- name: gmetad init script
+  template: >
+    src=gmetad.init.j2
+    dest=/etc/init.d/gmetad
+    owner=root
+    group=root
+    mode=0755
+  notify: restart gmetad
+
+- name: start gmetad service
+  service: name=gmetad state=started enabled=yes

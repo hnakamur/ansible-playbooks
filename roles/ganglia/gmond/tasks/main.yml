@@ -1,0 +1,30 @@
+---
+
+- name: ganglia config directory
+  file: >
+    path=/etc/ganglia/conf.d
+    state=directory
+    owner=root
+    group=root
+    mode=0755
+
+- name: gmond config file
+  template: >
+    src=gmond.conf.j2
+    dest=/etc/ganglia/gmond.conf
+    owner=root
+    group=root
+    mode=0644
+  notify: restart gmond
+
+- name: gmond init script
+  template: >
+    src=gmond.init.j2
+    dest=/etc/init.d/gmond
+    owner=root
+    group=root
+    mode=0755
+  notify: restart gmond
+
+- name: start gmond service
+  service: name=gmond state=started enabled=yes

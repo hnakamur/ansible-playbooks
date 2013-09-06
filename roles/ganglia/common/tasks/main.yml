@@ -1,0 +1,53 @@
+---
+
+- name: install dependent packages to build ganglia
+  yum: name={{ item }} state=present
+  with_items:
+    - apr-devel
+    - libconfuse-devel
+    - expat-devel
+    - pkgconfig
+    - python-devel
+    - pcre-devel
+    - rrdtool-devel
+
+- name: create group for ganglia
+  group: name=ganglia
+
+- name: create user for ganglia
+  user: >
+    name=ganglia
+    group=ganglia
+    comment="Ganglia Monitoring System"
+    home=/var/lib/ganglia
+    shell=/sbin/nologin
+
+- name: ganglia home directory
+  file:
+    path=/var/lib/ganglia
+    state=directory
+    owner=root
+    group=root
+    mode=0755
+
+- name: download ganglia source
+  get_url:
+    url=http://jaist.dl.sourceforge.net/project/ganglia/ganglia%20monitoring%20core/{{ ganglia_version }}/ganglia-{{ ganglia_version }}.tar.gz
+    dest=/usr/local/src/ganglia-{{ ganglia_version }}.tar.gz
+
+- name: build and install ganglia
+  shell: |
+    chdir=/usr/local/src
+    creates=/usr/bin/ganglia-config
+    tar xf ganglia-{{ ganglia_version }}.tar.gz &&
+    cd ganglia-{{ ganglia_version }} &&
+    ./configure\
+      --enable-setuid=ganglia\
+      --enable-setgid=ganglia\
+      --with-gmetad\
+      --disable-static\
+      --enable-shared\
+      --sysconfdir=/etc/ganglia\
+      --prefix=/usr &&
+    make &&
+    make install

@@ -1,2 +1,2 @@
+ganglia_version: "3.6.0"
 ganglia_cluster_name: my_cluster_1
-ganglia_send_metadata_interval: 5
