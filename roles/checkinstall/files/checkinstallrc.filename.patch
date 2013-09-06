@@ -1,0 +1,27 @@
+--- checkinstall/Makefile.orig	2013-09-07 02:25:03.299661612 +0900
++++ checkinstall/Makefile	2013-09-07 02:25:22.018245380 +0900
+@@ -36,23 +36,7 @@
+ 	done
+ 	
+ 	mkdir -p $(CONFDIR)
+-	install -m644  checkinstallrc-dist $(CONFDIR)
+-	if ! [ -f $(CONFDIR)/checkinstallrc ]; then \
+-		cp $(CONFDIR)/checkinstallrc-dist $(CONFDIR)/checkinstallrc; \
+-	else \
+-		echo; \
+-		echo; \
+-		echo ======================================================== ;\
+-		echo; \
+-		echo An existing checkinstallrc file has been found. ;\
+-		echo The one from this distribution can be found at: ; \
+-		echo; \
+-		echo -e \\t$(CONFDIR)/checkinstallrc-dist ; \
+-		echo; \
+-		echo; \
+-		echo ======================================================== ;\
+-		echo; \
+-	fi
++	install -m644  checkinstallrc-dist $(CONFDIR)/checkinstallrc
+ 	
+ clean:
+ 	for file in locale/checkinstall-*.mo ; do \

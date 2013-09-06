@@ -1,0 +1,67 @@
+---
+
+- name: download checkinstall source
+  git: >
+    repo=http://checkinstall.izto.org/checkinstall.git
+    dest=/usr/local/src/checkinstall
+    update=no
+
+- name: build checkinstall
+  command: >
+    creates=/usr/local/src/checkinstall/installwatch/installwatch.so
+    chdir=/usr/local/src/checkinstall
+    make
+
+- name: copy checkinstall lib64 patch
+  copy: >
+    dest=/usr/local/src/checkinstall/installwatch.lib64.patch
+    src=installwatch.lib64.patch
+
+- name: apply checkinstall lib64 patch
+  shell: >
+    creates=/usr/local/src/checkinstall/installwatch/Makefile.orig
+    chdir=/usr/local/src/checkinstall
+    patch -b -p1 < /usr/local/src/checkinstall/installwatch.lib64.patch
+
+- name: copy checkinstallrc filename patch
+  copy: >
+    dest=/usr/local/src/checkinstall/checkinstallrc.filename.patch
+    src=checkinstallrc.filename.patch
+
+- name: apply checkinstall lib64 patch
+  shell: >
+    creates=/usr/local/src/checkinstall/Makefile.orig
+    chdir=/usr/local/src/checkinstall
+    patch -b -p1 < /usr/local/src/checkinstall/checkinstallrc.filename.patch
+
+- name: install checkinstall
+  command: >
+    creates=/usr/local/lib64/installwatch.so
+    chdir=/usr/local/src/checkinstall
+    make install
+
+- name: "create directories for root user's rpmbuild"
+  file: >
+    path=~root/{{ item }}
+    state=directory
+    owner=root
+    group=root
+    mode=0755
+  with_items:
+    - rpmbuild
+    - rpmbuild/BUILD
+    - rpmbuild/RPMS
+    - rpmbuild/SOURCES
+    - rpmbuild/SPECS
+    - rpmbuild/SRPMS
+
+- name: make rpm for checkinstall
+  command: >
+    creates=/root/rpmbuild/RPMS/x86_64/checkinstall-{{ checkinstall_version }}-1.x86_64.rpm
+    chdir=/usr/local/src/checkinstall
+    /usr/local/sbin/checkinstall -R --nodoc --pkgversion={{ checkinstall_version }} -y
+
+- name: install checkinstall rpm
+  yum: >
+    name=/root/rpmbuild/RPMS/x86_64/checkinstall-{{ checkinstall_version }}-1.x86_64.rpm
+    state=present
