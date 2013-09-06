@@ -1,0 +1,46 @@
+---
+
+- name: php-fpm main config file
+  template: >
+    src=php-fpm.conf.j2
+    dest={{ xbuild_install_dir_prefix }}/php-{{ xbuild_php_version }}/etc/php-fpm.conf
+    owner=root
+    group=root
+    mode=0644
+  notify: reload php-fpm
+
+- name: php-fpm config include file
+  file: >
+    path={{ xbuild_install_dir_prefix }}/php-{{ xbuild_php_version }}/etc/fpm.d
+    state=directory
+    owner=root
+    group=root
+    mode=0755
+
+- name: php-fpm nginx config file
+  template: >
+    src=php-fpm.nginx.conf.j2
+    dest={{ xbuild_install_dir_prefix }}/php-{{ xbuild_php_version }}/etc/fpm.d/nginx.conf
+    owner=root
+    group=root
+    mode=0644
+  notify: reload php-fpm
+
+- name: php session directory for nginx
+  file: >
+    path={{ xbuild_install_dir_prefix }}/php-{{ xbuild_php_version }}/var/lib/php/session
+    state=directory
+    owner={{ php_fpm_group }}
+    group={{ php_fpm_group }}
+    mode=0755
+
+- name: php-fpm init script
+  template: >
+    src=php-fpm.init.j2
+    dest=/etc/init.d/php-fpm
+    owner=root
+    group=root
+    mode=0755
+
+- name: start php-fpm service
+  service: name=php-fpm state=started enabled=yes

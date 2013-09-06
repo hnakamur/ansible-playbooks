@@ -1,0 +1,3 @@
+php_fpm_listen_address: /var/run/php-fcgi.sock
+php_fpm_user: nginx
+php_fpm_group: nginx

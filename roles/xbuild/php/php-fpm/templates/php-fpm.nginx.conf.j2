@@ -1,6 +1,7 @@
 ; {{ ansible_managed }}
-; Start a new pool named 'www'.
-[www]
+
+; Start a new pool named 'nginx'.
+[nginx]
 
 ; The address on which to accept FastCGI requests.
 ; Valid syntaxes are:
@@ -154,7 +155,7 @@ pm.max_spare_servers = 35
 ; The log file for slow requests
 ; Default Value: not set
 ; Note: slowlog is mandatory if request_slowlog_timeout is set
-slowlog = /var/log/php-fpm/www-slow.log
+slowlog = var/log/php-fpm/nginx-slow.log
  
 ; Set open file descriptor rlimit.
 ; Default Value: system defined value
@@ -194,7 +195,7 @@ slowlog = /var/log/php-fpm/www-slow.log
 ; the current environment.
 ; Default Value: clean env
 ;env[HOSTNAME] = $HOSTNAME
-;env[PATH] = /usr/local/bin:/usr/bin:/bin
+env[PATH] = {{ xbuild_install_dir_prefix }}/php-{{ xbuild_php_version }}/bin:/usr/local/bin:/usr/bin:/bin
 ;env[TMP] = /tmp
 ;env[TMPDIR] = /tmp
 ;env[TEMP] = /tmp
@@ -217,11 +218,11 @@ slowlog = /var/log/php-fpm/www-slow.log
 ;                specified at startup with the -d argument
 ;php_admin_value[sendmail_path] = /usr/sbin/sendmail -t -i -f www@my.domain.com
 ;php_flag[display_errors] = off
-php_admin_value[error_log] = /var/log/php-fpm/www-error.log
+php_admin_value[error_log] = var/log/php-fpm/nginx-error.log
 php_admin_flag[log_errors] = on
 ;php_admin_value[memory_limit] = 128M
 
 ; Set session path to a directory owned by process user
 php_value[session.save_handler] = files
-php_value[session.save_path] = /var/lib/php/session
+php_value[session.save_path] = var/lib/php/session
 
