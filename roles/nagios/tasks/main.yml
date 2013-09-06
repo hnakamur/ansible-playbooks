@@ -1,6 +1,8 @@
+---
+
 # set up nagios to monitor ganglia metrics
 - name: install nagios
-  yum: pkg={{ item }}
+  yum: name={{ item }} state=present
   with_items:
     - nagios
     - nagios-plugins
@@ -12,24 +14,45 @@
     - nagios-plugins-ssh
     - nagios-plugins-swap
     - nagios-plugins-load
+
 - name: put nginx user to nagios group.
   user: name=nginx groups=nagios append=yes
+
 - name: change group of nagios passwd file for nginx
   file: path=/etc/nagios/passwd group=nginx
-#- name: add a htpasswd user for nagios
-# htpasswd needs ansible >= 1.3
-#  htpasswd: path=/etc/nagios/passwd name=nagiosadmin password=3bzPhnXOxmyzK9Wf owner=root group=nginx mode=0640
+
+- name: add a htpasswd user for nagios
+  htpasswd: >
+    path=/etc/nagios/passwd
+    name={{ nagios_web_userid }}
+    password={{ nagios_web_password }}
+    owner=root
+    group=nginx
+    mode=0640
+
 - name: add permission on nagios log directory to nginx
   file: path=/var/log/nagios group=nginx state=directory recurse=yes
+
 - name: change group of nagios config.inc.php file for nginx
   file: path=/usr/share/nagios/html/config.inc.php group=nginx
+
 - name: nagios main config
-  template: src=roles/common/templates/nagios.cfg.j2 dest=/etc/nagios/nagios.cfg owner=nagios group=nagios mode=0644
-  notify:
-    - reload nagios
+  template: >
+    src=nagios.cfg.j2
+    dest=/etc/nagios/nagios.cfg
+    owner=nagios
+    group=nagios
+    mode=0644
+  notify: reload nagios
+
 - name: add nginx config for nagios
-  template: src=roles/common/templates/nagios.nginx.ssl.conf.j2 dest=/etc/nginx/conf.d/ssl.location.d/nagios.conf owner=root group=root mode=0644
-  notify:
-    - reload nginx
+  template: >
+    src=nagios.nginx.ssl.conf.j2
+    dest=/etc/nginx/conf.d/ssl.location.d/nagios.conf
+    owner=root
+    group=root
+    mode=0644
+  notify: reload nginx
+
 - name: start nagios service
   service: name=nagios state=started enabled=yes
