@@ -1,16 +1,22 @@
+---
 # ansible playbook for installing jenkins
+
 - name: install jdk 1.7
   yum: pkg=java-1.7.0-openjdk state=installed
+
 - name: download jenkins.repo
   get_url : >
     url=http://pkg.jenkins-ci.org/redhat/jenkins.repo
     dest=/etc/yum.repos.d/jenkins.repo
+
 - name: import jenkins repo key
   rpm_key: >
     state=present
     key=http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
+
 - name: install jenkins
   yum: pkg=jenkins state=installed
+
 - name: nginx https location config file directory
   file: >
     path=/etc/nginx/conf.d/ssl.location.d
@@ -18,23 +24,24 @@
     owner=root
     group=root
     mode=0755
+
 - name: jenkins sysconfig file
   template: >
-    src=roles/common/templates/jenkins.sysconfig.j2
+    src=jenkins.sysconfig.j2
     dest=/etc/sysconfig/jenkins
     owner=root
     group=root
     mode=0600
-  notify:
-    - restart jenkins
+  notify: restart jenkins
+
 - name: start jenkins service
   service: name=jenkins state=started enabled=yes
+
 - name: jenkins config file for nginx
   template: >
-    src=roles/common/templates/jenkins.nginx.ssl.conf.j2
+    src=jenkins.nginx.ssl.conf.j2
     dest=/etc/nginx/conf.d/ssl.location.d/jenkins.conf
     owner=root
     group=root
     mode=0644
-  notify:
-    - reload nginx
+  notify: reload nginx
