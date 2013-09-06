@@ -1,8 +1,8 @@
+---
+
 - name: install dependent packages to build Erlang/OTP
   yum: name={{ item }} state=latest
   with_items:
-    - gcc
-    - make
     - ncurses-devel
     - openssl-devel
  
