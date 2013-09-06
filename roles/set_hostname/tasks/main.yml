@@ -2,3 +2,10 @@
 
 - name: set hostname
   hostname: name={{ inventory_hostname }}{{ domain_to_set }}
+  register: result
+
+- name: update ansible_fqdn and ansible_hostname
+  set_fact:
+    ansible_fqdn: "{{ inventory_hostname }}{{ domain_to_set }}"
+    ansible_hostname: "{{ inventory_hostname }}"
+  when: result.changed
