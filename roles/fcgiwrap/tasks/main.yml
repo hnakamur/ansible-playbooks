@@ -1,0 +1,20 @@
+---
+
+- name: download fcgiwrap source
+  git: >
+    repo=git://github.com/gnosek/fcgiwrap.git
+    dest=/usr/local/src/fcgiwrap-{{ fcgiwrap_version }}
+    version={{ fcgiwrap_version }}
+    update=no
+
+- name: install dependent packages for building fcgiwrap
+  yum: name=fcgi-devel state=present
+
+- name: build and install fcgiwrap
+  shell: |
+    creates=/usr/local/sbin/fcgiwrap
+    chdir=/usr/local/src/fcgiwrap-{{ fcgiwrap_version }}
+    autoreconf -i &&
+    ./configure &&
+    make &&
+    make install
