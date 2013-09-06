@@ -1,0 +1,12 @@
+---
+
+- name: download mysql server only rpms
+  get_url: >
+    url={{ mysql_download_base_url }}/{{ item.filename }}
+    dest={{ mysql_download_dest_dir }}
+    sha256sum={{ item.sha256sum }}
+  with_items: "{{ mysql_server_rpms }}"
+
+- name: install mysql server only rpms
+  yum: name="{{ mysql_download_dest_dir }}/{{ item.filename }}" state=present
+  with_items: "{{ mysql_server_rpms }}"

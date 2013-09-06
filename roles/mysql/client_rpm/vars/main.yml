@@ -15,8 +15,3 @@ mysql_server_rpms:
     sha256sum: 90958a4639dba713cba8fc26a030349eca7fd5bcb9d9a794ce6ebf66fcdc6545
 
 mysql_download_dest_dir: /usr/local/src
-
-# To install server, override this variable when calling role like below:
-# roles:
-# - { role: mysql/rpm, mysql_rpm_server_needed: true }
-mysql_rpm_server_needed: false
