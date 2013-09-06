@@ -12,17 +12,6 @@
     chdir=/usr/local/src/checkinstall
     make
 
-- name: copy checkinstall lib64 patch
-  copy: >
-    dest=/usr/local/src/checkinstall/installwatch.lib64.patch
-    src=installwatch.lib64.patch
-
-- name: apply checkinstall lib64 patch
-  shell: >
-    creates=/usr/local/src/checkinstall/installwatch/Makefile.orig
-    chdir=/usr/local/src/checkinstall
-    patch -b -p1 < /usr/local/src/checkinstall/installwatch.lib64.patch
-
 - name: copy checkinstallrc filename patch
   copy: >
     dest=/usr/local/src/checkinstall/checkinstallrc.filename.patch
@@ -36,9 +25,9 @@
 
 - name: install checkinstall
   command: >
-    creates=/usr/local/lib64/installwatch.so
+    creates=/usr/lib64/installwatch.so
     chdir=/usr/local/src/checkinstall
-    make install
+    make install PREFIX=/usr LIBDIR=/usr/lib
 
 - name: "create directories for root user's rpmbuild"
   file: >
@@ -59,7 +48,9 @@
   command: >
     creates=/root/rpmbuild/RPMS/x86_64/checkinstall-{{ checkinstall_version }}-1.x86_64.rpm
     chdir=/usr/local/src/checkinstall
-    /usr/local/sbin/checkinstall -R --nodoc --pkgversion={{ checkinstall_version }} -y
+    /usr/sbin/checkinstall -R --nodoc
+      --pkgversion={{ checkinstall_version }} -y
+      make install PREFIX=/usr LIBDIR=/usr/lib64
 
 - name: install checkinstall rpm
   yum: >
