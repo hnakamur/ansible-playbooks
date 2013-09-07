@@ -1,4 +1,4 @@
 ---
 dependencies:
   - { role: mysql/server }
-  - { role: cron }
+  - { role: mysql/backup }

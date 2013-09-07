@@ -1,6 +1,7 @@
 ---
 # The playbook for mysql/server tasks
 
+- include: server_rpm.yml
 - include: start_server.yml
 - include: secure_installation.yml
 - include: logrotate.yml

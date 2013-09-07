@@ -73,6 +73,3 @@
     minute={{ mysql_backup_minute }}
     job="~{{ mysql_backup_os_user_name }}/bin/backup_mysql_db.sh --all-databases"
     state=present
-
-- name: ensure cron service started
-  service: name=crond state=started enabled=yes
