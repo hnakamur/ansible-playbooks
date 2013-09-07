@@ -65,6 +65,7 @@
   command: >
     creates=/root/rpmbuild/RPMS/x86_64/checkinstall-{{ checkinstall_version }}-1.x86_64.rpm
     chdir=/usr/local/src/checkinstall
+    env LD_PRELOAD=/usr/local/src/checkinstall/installwatch/installwatch.so
     /usr/sbin/checkinstall -R --nodoc
       --pkgversion={{ checkinstall_version }} -y
       make install PREFIX=/usr LIBDIR=/usr/lib64 CONFDIR=/etc
