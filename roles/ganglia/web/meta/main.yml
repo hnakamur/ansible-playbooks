@@ -1,6 +1,0 @@
----
-dependencies:
-  - { role: ganglia/gmetad }
-  - { role: ganglia/gmond }
-  - { role: nginx }
-  - { role: xbuild-php/php-fpm }
