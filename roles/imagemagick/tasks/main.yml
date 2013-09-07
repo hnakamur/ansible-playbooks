@@ -1,0 +1,64 @@
+---
+
+- name: download imagemagick source
+  get_url: >
+    url=http://www.imagemagick.org/download/ImageMagick-{{ imagemagick_version }}.tar.xz
+    dest=/usr/local/src/ImageMagick-{{ imagemagick_version }}.tar.xz
+
+- name: extract imagemagick source
+  command: >
+    creates=/usr/local/src/ImageMagick-{{ imagemagick_version }}
+    chdir=/usr/local/src
+    tar xf /usr/local/src/ImageMagick-{{ imagemagick_version }}.tar.xz
+
+- name: install dependent pacakges for building imagemagick
+  yum: name={{ item }} state=present
+  with_items:
+    - libpng-devel
+    - libjpeg-devel
+    - giflib-devel
+    - libtiff-devel
+    - fontconfig-devel
+    - freetype-devel
+    - libxml2-devel
+    - libxslt-devel
+    - zlib-devel
+    - bzip2-devel
+
+- name: configure imagemagick
+  command: >
+    creates=/usr/local/src/ImageMagick-{{ imagemagick_version }}/config.status
+    chdir=/usr/local/src/ImageMagick-{{ imagemagick_version }}
+    ./configure --libdir=/usr/local/lib64
+
+- name: build imagemagick
+  command: >
+    creates=/usr/local/src/ImageMagick-{{ imagemagick_version }}/utilities/.libs/convert
+    chdir=/usr/local/src/ImageMagick-{{ imagemagick_version }}
+    make
+
+#- name: install imagemagick
+#  command: >
+#    creates=/usr/local/bin/convert
+#    chdir=/usr/local/src/ImageMagick-{{ imagemagick_version }}
+#    make install
+
+- name: create imagemagick rpm
+  command: >
+    creates=/root/rpmbuild/RPMS/x86_64/{{ imagemagick_rpm_name }}-{{ imagemagick_version|replace('-', '.') }}-{{ imagemagick_rpm_release }}.x86_64.rpm
+    chdir=/usr/local/src/ImageMagick-{{ imagemagick_version }}
+    checkinstall -R --nodoc
+      --pkgname={{ imagemagick_rpm_name }}
+      --pkgversion={{ imagemagick_version|replace('-', '.') }}
+      --pkgrelease={{ imagemagick_rpm_release }}
+      --pkglicense=ImageMagick
+      --pkggroup=Applications/Multimedia
+      -y
+
+- name: install imagemagick rpm
+  # This is faster than yum module because of no network access.
+  shell: |
+    yum install -C -q -y \
+      /root/rpmbuild/RPMS/x86_64/{{ imagemagick_rpm_name }}-{{ imagemagick_version|replace('-', '.') }}-{{ imagemagick_rpm_release }}.x86_64.rpm; echo $?
+  register: result
+  changed_when: result.stdout == '0'
