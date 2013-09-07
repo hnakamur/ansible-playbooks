@@ -21,7 +21,7 @@
 -		echo ======================================================== ;\
 -		echo; \
 -	fi
-+	install -m644  checkinstallrc-dist $(CONFDIR)/checkinstallrc
++	install -m644  checkinstallrc $(CONFDIR)/checkinstallrc
  	
  clean:
  	for file in locale/checkinstall-*.mo ; do \

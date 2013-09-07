@@ -32,7 +32,13 @@
   shell: >
     creates=/usr/local/src/checkinstall/checkinstallrc-dist.orig
     chdir=/usr/local/src/checkinstall
-    patch -b < /usr/local/src/checkinstall/checkinstallrc-dist.patch
+    patch -o checkinstallrc -b < /usr/local/src/checkinstall/checkinstallrc-dist.patch
+
+- name: modify checkinstallrc default location
+  shell: >
+    creates=/usr/local/src/checkinstall/checkinstall.orig
+    chdir=/usr/local/src/checkinstall
+    sed -i.orig 's|\${INSTALLDIR}/checkinstallrc|/etc/checkinstallrc|' checkinstall
 
 - name: install checkinstall
   command: >
