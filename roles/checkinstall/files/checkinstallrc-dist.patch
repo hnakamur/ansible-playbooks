@@ -1,6 +1,14 @@
---- checkinstallrc-dist.orig	2013-09-07 04:51:59.553020842 +0900
-+++ checkinstallrc-dist	2013-09-07 14:29:04.736006579 +0900
-@@ -23,7 +23,7 @@
+--- checkinstallrc-dist.orig	2013-09-07 15:02:56.767005941 +0900
++++ checkinstallrc-dist	2013-09-07 15:06:45.066005843 +0900
+@@ -16,14 +16,14 @@
+ DEBUG=0
+ 
+ # Location of the "installwatch" program
+-INSTALLWATCH_PREFIX="/usr/local"
++INSTALLWATCH_PREFIX="/usr"
+ INSTALLWATCH=${INSTALLWATCH_PREFIX}/bin/installwatch
+ 
+ # Location of the makepkg program. "makepak" is the default, and is 
  # included with checkinstall. If you want to use Slackware's native "makepkg"
  # then set this to "makepkg"
  
