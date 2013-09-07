@@ -17,17 +17,29 @@
     dest=/usr/local/src/checkinstall/checkinstallrc.filename.patch
     src=checkinstallrc.filename.patch
 
-- name: apply checkinstall lib64 patch
+- name: apply checkinstallrc filename patch
   shell: >
     creates=/usr/local/src/checkinstall/Makefile.orig
     chdir=/usr/local/src/checkinstall
     patch -b -p1 < /usr/local/src/checkinstall/checkinstallrc.filename.patch
 
+
+- name: copy checkinstallrc-dist content patch
+  copy: >
+    dest=/usr/local/src/checkinstall/checkinstallrc-dist.patch
+    src=checkinstallrc-dist.patch
+
+- name: apply checkinstallrc-dist patch
+  shell: >
+    creates=/usr/local/src/checkinstall/checkinstallrc-dist.orig
+    chdir=/usr/local/src/checkinstall
+    patch -b < /usr/local/src/checkinstall/checkinstallrc-dist.patch
+
 - name: install checkinstall
   command: >
     creates=/usr/lib64/installwatch.so
     chdir=/usr/local/src/checkinstall
-    make install PREFIX=/usr LIBDIR=/usr/lib64 CONFDIR=/etc
+    make install PREFIX=/usr LIBDIR=/usr/lib64
 
 - name: "create directories for root user's rpmbuild"
   file: >
@@ -50,7 +62,7 @@
     chdir=/usr/local/src/checkinstall
     /usr/sbin/checkinstall -R --nodoc
       --pkgversion={{ checkinstall_version }} -y
-      make install PREFIX=/usr LIBDIR=/usr/lib64 CONFDIR=/etc
+      make install PREFIX=/usr LIBDIR=/usr/lib64
 
 - name: install checkinstall rpm
   yum: >
