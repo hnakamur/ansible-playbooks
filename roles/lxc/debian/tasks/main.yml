@@ -1,17 +1,20 @@
+---
+
 - name: install lxc
   apt: pkg=lxc state=present
+
 - name: modify resolvconf
   template: >
-    src=roles/lxc/templates/resolvconf.head.j2
+    src=resolvconf.head.j2
     dest=/etc/resolvconf/resolv.conf.d/head
     owner=root
     group=root
     mode=0644
-  notify:
-    - update resolvconf
+  notify: update resolvconf
+
 - name: centos container definition for lxc
   template: >
-    src=roles/lxc/templates/ubuntu_lxc.centos.j2
+    src=lxc-centos.j2
     dest=/usr/lib/lxc/templates/lxc-centos
     owner=root
     group=root

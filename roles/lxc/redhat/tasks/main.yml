@@ -1,3 +1,5 @@
+---
+
 - name: enable ip forwarding for lxc
   sysctl: name=net.ipv4.ip_forward value=1 state=present
 
@@ -55,7 +57,7 @@
 - name: copy lxc.spec for lxc
   # we need to pass --disable-apparmor option to configure for lxc 0.8.0
   copy: >
-    src=roles/lxc/files/lxc-0.8.0.spec
+    src=lxc-0.8.0.spec
     dest=/usr/local/src/lxc-{{ lxc_version }}/lxc.spec
   when: lxc_version == '0.8.0'
 
@@ -99,7 +101,7 @@
 
 - name: centos container definition for lxc
   template: >
-    src=roles/lxc/templates/centos_lxc.centos.j2
+    src=lxc-centos.j2
     dest=/usr/share/lxc/templates/lxc-centos
     owner=root
     group=root
@@ -108,7 +110,7 @@
 
 - name: centos container definition for lxc
   template: >
-    src=roles/lxc/templates/centos_lxc.centos.j2
+    src=lxc.centos.j2
     dest=/usr/lib64/lxc/templates/lxc-centos
     owner=root
     group=root
@@ -125,7 +127,7 @@
 
 - name: lxc default config
   template: >
-    src=roles/lxc/templates/centos_lxc.default.conf.j2
+    src=default.conf.j2
     dest=/etc/lxc/default.conf
     owner=root
     group=root
@@ -133,7 +135,7 @@
 
 - name: dnsmasq main config
   template: >
-    src=roles/lxc/templates/centos_lxc.dnsmasq.conf.j2
+    src=dnsmasq.conf.j2
     dest=/etc/dnsmasq.conf
     owner=root
     group=root
@@ -143,7 +145,7 @@
 
 - name: lxc dnsmasq config
   template: >
-    src=roles/lxc/templates/centos_lxc.dnsmasq.lxc.conf.j2
+    src=dnsmasq.lxc.conf.j2
     dest=/etc/dnsmasq.d/lxc.conf
     owner=root
     group=root
@@ -156,7 +158,7 @@
 
 - name: lxc dhclient config
   template: >
-    src=roles/lxc/templates/centos_lxc.dhclient-eth0.conf.j2
+    src=dhclient-eth0.conf.j2
     dest=/etc/dhcp/dhclient-eth0.conf
     owner=root
     group=root
@@ -182,7 +184,7 @@
 
 - name: lxc-net config for init script
   template: >
-    src=roles/lxc/templates/centos_lxc.lxc-net.sysconfig.j2
+    src=lxc-net.sysconfig.j2
     dest=/etc/sysconfig/lxc-net
     owner=root
     group=root
@@ -192,7 +194,7 @@
 
 - name: lxc-net init script
   template: >
-    src=roles/lxc/templates/centos_lxc.lxc-net.init.j2
+    src=lxc-net.init.j2
     dest=/etc/init.d/lxc-net
     owner=root
     group=root
@@ -213,7 +215,7 @@
 
 - name: lxc-auto init script
   template: >
-    src=roles/lxc/templates/centos_lxc.lxc-auto.init.j2
+    src=lxc-auto.init.j2
     dest=/etc/init.d/lxc-auto
     owner=root
     group=root

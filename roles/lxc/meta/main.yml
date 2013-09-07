@@ -1,0 +1,4 @@
+---
+dependencies:
+  - { role: lxc/redhat, when: "ansible_os_family == 'RedHat'" }
+  - { role: lxc/debian, when: "ansible_os_family == 'Debian'" }
