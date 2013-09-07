@@ -3,5 +3,5 @@ dependencies:
   - { role: nginx }
   - { role: fcgiwrap }
   - { role: spawn-fcgi }
-  - { role: php-fpm }
+  - { role: xbuild-php/php-fpm }
   - { role: nagios/plugins }
