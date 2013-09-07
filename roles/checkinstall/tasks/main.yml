@@ -27,7 +27,7 @@
   command: >
     creates=/usr/lib64/installwatch.so
     chdir=/usr/local/src/checkinstall
-    make install PREFIX=/usr LIBDIR=/usr/lib
+    make install PREFIX=/usr LIBDIR=/usr/lib64
 
 - name: "create directories for root user's rpmbuild"
   file: >
