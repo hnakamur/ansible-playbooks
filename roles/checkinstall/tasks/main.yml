@@ -27,7 +27,7 @@
   command: >
     creates=/usr/lib64/installwatch.so
     chdir=/usr/local/src/checkinstall
-    make install PREFIX=/usr LIBDIR=/usr/lib64
+    make install PREFIX=/usr LIBDIR=/usr/lib64 CONFDIR=/etc
 
 - name: "create directories for root user's rpmbuild"
   file: >
@@ -50,7 +50,7 @@
     chdir=/usr/local/src/checkinstall
     /usr/sbin/checkinstall -R --nodoc
       --pkgversion={{ checkinstall_version }} -y
-      make install PREFIX=/usr LIBDIR=/usr/lib64
+      make install PREFIX=/usr LIBDIR=/usr/lib64 CONFDIR=/etc
 
 - name: install checkinstall rpm
   yum: >
