@@ -16,7 +16,7 @@
     group=root
     mode=0644
 
-- name: install tj-agent
+- name: install td-agent
   yum: >
     name=td-agent
     state=present
